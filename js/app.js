@@ -18,7 +18,7 @@
 /**
  * Creat a new google form. 
  */
-function callScriptFunction() {
+function callScriptFunction(inEmailAddress) {
   var scriptId = "1LkBObf9fn_8dylXxoYp0A53aUYkjHoRYWeVbMvkdfybJK6UA2FpoPR1L";
 
   // Call the Apps Script API run method
@@ -28,7 +28,10 @@ function callScriptFunction() {
   gapi.client.script.scripts.run({
     'scriptId': scriptId,
     'resource': {
-      'function': 'createForm'
+      'function': 'createForm',
+      "parameters": [
+        inEmailAddress
+      ]
     }
   }).then(function(resp) {
     var result = resp.result;
