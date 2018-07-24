@@ -5,6 +5,13 @@
     <meta charset="utf-8" />
   </head>
   <body>
+    <link rel="stylesheet" type="text/css" href="css/loader.css"/>
+
+    <div class="loading-container">
+      <div class="loading"></div>
+      <div id="loading-text">Loading your petition</div>
+    </div>
+
     <p>Create your petition</p>
 
     <!--Add buttons to initiate auth sequence and sign out-->
@@ -13,10 +20,16 @@
 
     <pre id="content"></pre>
 
+    <input id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" />
+    <!-- <button id="edit_signature">edit signature</button> -->
+    <div style="width:800px;height:800px;" id="signature-container"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <script type="text/javascript" src="js/privacy.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
     <script type="text/javascript">
-
       // Array of API discovery doc URLs for APIs used by the quickstart
       var DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1", "https://people.googleapis.com/$discovery/rest?version=v1"];
 
@@ -63,7 +76,7 @@
         if (isSignedIn) {
           authorizeButton.style.display = 'none';
           signoutButton.style.display = 'block';
-          // callScriptFunction();
+
           makeApiCall();
         } else {
           authorizeButton.style.display = 'block';
@@ -72,13 +85,15 @@
       }
 
       function makeApiCall() {
+        showLoader(true);
+
         // Make an API call to the People API, and print the user's given name.
         gapi.client.people.people.get({
           'resourceName': 'people/me',
           'requestMask.includeField': 'person.names,person.emailAddresses'
         }).then(function(response) {
           appendPre("Hi, " + response.result.names[0].givenName);
-          callScriptFunction(response.result.emailAddresses[0].value);
+          callScriptFunction(response.result.emailAddresses[0].value, displayEditForm);
         }, function(reason) {
           console.log('Error: ' + reason.result.error.message);
         });
