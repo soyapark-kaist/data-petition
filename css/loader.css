@@ -128,6 +128,14 @@
     width: 120px;
 }
 
+#btn_create_petition {
+    display: none;
+}
+
 #input_edit_signature {
+    display: none;
+}
+
+.authorize-only {
     display: none;
 }

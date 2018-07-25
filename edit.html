@@ -12,7 +12,7 @@
       <div id="loading-text">Loading your petition</div>
     </div>
 
-    <p>Landing page</p>
+    <p>Create your petition</p>
 
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" style="display: none;">Log in with Google account</button>
@@ -20,8 +20,9 @@
 
     <pre id="content"></pre>
 
-    <p>TODO not let users create a petition without not being logged in</p>
-    <button id="btn_create_petition" onclick="createPetition()">Create your data-driven petition</button>
+    <!-- <input class="authorize-only" id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" /> -->
+    <input class="authorize-only" id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" />
+    <a id="input_edit_signature" type="button" href="dashboard.html"></a>
 
     <div style="width:800px;height:800px;" id="signature-container"></div>
 
@@ -31,7 +32,7 @@
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
 
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/edit.js"></script>
     
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
