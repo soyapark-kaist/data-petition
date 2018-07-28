@@ -3,36 +3,59 @@
   <head>
     <title>Data-driven petition</title>
     <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/loader.css"/>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
-    <link rel="stylesheet" type="text/css" href="css/loader.css"/>
+    <nav>
+      <div class="nav-wrapper orange darken-3">
+        <a href="/" class="brand-logo">Logo</a>
+        <ul id="nav-mobile" class="right">
+            <!--Add buttons to initiate auth sequence and sign out-->
+            <li><a id="authorize_button" style="display: none;">Log in with Google account</a></li>
+            <li><a id="signout_button" style="display: none;">Sign Out</a></li>
+          </ul>
+      </div>
+    </nav>
 
-    <div class="loading-container">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <h1 class="header center orange-text">Landing Page</h1>
+        <div class="row center">
+          <h5 class="header col s12 light">Let's go CHI! WOW!</h5>
+        </div>
+        <div class="row center">
+        
+          <pre id="content"></pre>
+        
+          <p>TODO not let users create a petition without not being logged in</p>
+          <div class="col s6 offset-s3">
+            <button id="btn_create_petition" onclick="createPetition()" class="btn-large waves-effect waves-light btn orange">Create your data-driven petition</button>
+          </div>
+          <div style="width:800px;height:800px;" id="signature-container"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-container" style="z-index: 1000;">
       <div class="loading"></div>
       <div id="loading-text">Loading your petition</div>
     </div>
 
-    <p>Landing page</p>
-
-    <!--Add buttons to initiate auth sequence and sign out-->
-    <button id="authorize_button" style="display: none;">Log in with Google account</button>
-    <button id="signout_button" style="display: none;">Sign Out</button>
-
-    <pre id="content"></pre>
-
-    <p>TODO not let users create a petition without not being logged in</p>
-    <button id="btn_create_petition" onclick="createPetition()">Create your data-driven petition</button>
-
-    <div style="width:800px;height:800px;" id="signature-container"></div>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
 
     <script type="text/javascript" src="js/privacy.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
 
     <script type="text/javascript" src="js/index.js"></script>
-    
+
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">

@@ -133,6 +133,8 @@
 }
 
 #input_edit_signature {
+    color: white;
+    cursor: pointer;
     display: none;
 }
 
