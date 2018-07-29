@@ -39,10 +39,23 @@ function initSignatureSummary(inRes) {
   checkAvailableGraphTypes(); 
 
   google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(function() {drawChart("pie", CATEGORY[0])}); // Show a basic graph initially
+  google.charts.setOnLoadCallback(function() {prepareVizInterface("pie"); drawChart("pie", CATEGORY[0], {"count": true})}); // Show a basic graph initially
+
+  initListener();
 
   showLoader(false);
 } 
+
+function initListener() {
+
+  $('select.select-category').on('change', function() {
+    drawChart( $(this).parent()[0].getAttribute('graph-type'), this.value, {"count": true} );
+  })
+
+  $('select.select-value').on('change', function() {
+    drawChart( $(this).parents('div')[0].getAttribute('graph-type'), $($(this).parent()[0]).siblings('.select-category').val(), {"sum": this.value} );
+  })
+}
 
 function checkAvailableGraphTypes() {
   computeCategory();
@@ -63,10 +76,11 @@ function computeCategory() {
   }
 }
 
-function getFieldVal(inField) {
+function getFieldVal(inField, inCondition=function(r){ return true;}) {
   var arr = []
   for(var i = 0; i < SIGNATURE_DATA.length; i++) {
     if( !(inField in SIGNATURE_DATA[i]) ) continue;
+    if( !inCondition(SIGNATURE_DATA[i]) ) continue;
 
     arr.push(SIGNATURE_DATA[i][inField]);
   }
@@ -98,23 +112,26 @@ function displayGraph(inGraphType, inFieldArray) {
   }
 }
 
-function drawChart(inGraphType, inField) {
-  // If it's count
-  var graphData = [[inField, 'Count for each ' + inField]];
-  var arr = getFieldVal(inField);
-  var counts = {};
+function prepareVizInterface(inGraphType) {
+  $("#{0}-interface select".format(inGraphType)).empty();
 
-  for (var i = 0; i < arr.length; i++) {
-    var val = arr[i];
-    counts[val] = counts[val] ? counts[val] + 1 : 1;
-  }
+  // TODO remove it
+  $("#{0}-interface select".format(inGraphType)).show();
 
-  for (var key in counts) {
-    graphData.push([key, counts[key]]);
+  for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+    if ( CATEGORY.includes(key) )
+      $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+    else 
+      $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
   }
+}
+
+function drawChart(inGraphType, inField, inValueFields) {
+  var graphData = [];
+
 
   var chart;
-  var data = google.visualization.arrayToDataTable( graphData );
+  var data;
 
   /*([
     ['Task', 'Hours per Day'],
@@ -126,12 +143,52 @@ function drawChart(inGraphType, inField) {
   ]);*/
 
   if( inGraphType == "pie") {
-    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    // If it's count
+    if ( "count" in inValueFields) {
+      graphData.push([inField, 'Count for each ' + inField]);
+
+      var arr = getFieldVal(inField);
+      var counts = {};
+
+      for (var i = 0; i < arr.length; i++) {
+        var val = arr[i];
+        counts[val] = counts[val] ? counts[val] + 1 : 1;
+      }
+
+      for (var key in counts) {
+        graphData.push([key, counts[key]]);
+      }
+    } else { // sum of other field
+      graphData.push([inField, 'Sum of ' + inValueFields['sum']]);
+
+      var category_vals = new Set(getFieldVal(inField));
+      var sum = {};
+
+      category_vals.forEach(function(v) {
+        sum[v] = SUM( getFieldVal(inValueFields['sum'], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+      });
+
+      for (var key in sum) {
+        graphData.push([key, sum[key]]);
+      }
+    }
+
+    data = google.visualization.arrayToDataTable( graphData );
+    chart = new google.visualization.PieChart(document.getElementById('chart-container'));
   }
   
 
   var options = {
-      title: inField
+      title: graphData[0][1]
   };
   chart.draw(data, options);
 }
+
+String.prototype.format = function() {
+    var formatted = this;
+    for( var arg in arguments ) {
+        formatted = formatted.replace("{" + arg + "}", arguments[arg]);
+    }
+    return formatted;
+};
+const SUM = arr => arr.reduce((a,b) => a + b, 0)

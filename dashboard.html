@@ -117,7 +117,19 @@
           </div>
         </div>
         
-        <div id="piechart" style="width: 900px; height: 500px;"></div>
+        <div id="viz-container">
+          <div id="pie-interface" graph-type="pie">
+            <select class="select-category">
+            </select>
+
+            <input type="radio" name="pie-radio" value="count" id="pie-0" checked/> 
+            <label for="pie-0">Count of Category</label><br/>
+
+            <input type="radio" name="pie-radio" value="other" id="pie-1"/> 
+            <label for="pie-1">Sum of <select class="select-value"></select></label>
+          </div>
+          <div id="chart-container" style="width: 900px; height: 500px;"></div>
+        </div>
       </div>
     </div>
     
