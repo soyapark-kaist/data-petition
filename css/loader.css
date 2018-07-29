@@ -141,3 +141,7 @@
 .authorize-only {
     display: none;
 }
+
+.option-graph-type {
+    margin: 0 !important;
+}
