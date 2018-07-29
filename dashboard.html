@@ -25,6 +25,18 @@
     <h1 id="participants-number"></h1>
     <h3>of partipants</h3>
 
+    <p>Choose a chart type</p>
+    
+    <p>Continuous variable chart (todo maybe showing preview images instead?)</p>
+    <p class="option-graph-type" graph-required-numeric=2>Scatter</p>
+    <p class="option-graph-type" graph-required-numeric=2>Area</p>
+    <p class="option-graph-type" graph-required-numeric=1>Line</p>
+    <p class="option-graph-type" graph-required-numeric=1>Bar</p>
+    <p class="option-graph-type" graph-required-numeric=0>Pie</p>
+    <p class="option-graph-type" graph-required-numeric=0>Network</p>
+
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script type="text/javascript" src="js/privacy.js"></script>
@@ -33,6 +45,7 @@
 
     <script type="text/javascript" src="js/dashboard.js"></script>
     
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
