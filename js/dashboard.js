@@ -39,10 +39,19 @@ function initSignatureSummary(inRes) {
   checkAvailableGraphTypes(); 
 
   google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(function() {drawChart("pie", CATEGORY[0])}); // Show a basic graph initially
+  google.charts.setOnLoadCallback(function() {prepareVizInterface("pie"); drawChart("pie", CATEGORY[0])}); // Show a basic graph initially
+
+  initListener();
 
   showLoader(false);
 } 
+
+function initListener() {
+
+  $('select.select-category').on('change', function() {
+    drawChart( $(this).parent()[0].getAttribute('graph-type'), this.value );
+  })
+}
 
 function checkAvailableGraphTypes() {
   computeCategory();
@@ -98,6 +107,14 @@ function displayGraph(inGraphType, inFieldArray) {
   }
 }
 
+function prepareVizInterface(inGraphType) {
+  $(".select-category").empty();
+  $(".select-category").show();
+
+  for (var i in CATEGORY)
+    $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(CATEGORY[i], CATEGORY[i]) );
+}
+
 function drawChart(inGraphType, inField) {
   // If it's count
   var graphData = [[inField, 'Count for each ' + inField]];
@@ -126,7 +143,7 @@ function drawChart(inGraphType, inField) {
   ]);*/
 
   if( inGraphType == "pie") {
-    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+    var chart = new google.visualization.PieChart(document.getElementById('chart-container'));
   }
   
 
@@ -135,3 +152,11 @@ function drawChart(inGraphType, inField) {
   };
   chart.draw(data, options);
 }
+
+String.prototype.format = function() {
+    var formatted = this;
+    for( var arg in arguments ) {
+        formatted = formatted.replace("{" + arg + "}", arguments[arg]);
+    }
+    return formatted;
+};
