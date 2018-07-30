@@ -153,3 +153,12 @@ function getJsonFromUrl(hashBased) {
   });
   return result;
 }
+
+String.prototype.format = function() {
+    var formatted = this;
+    for( var arg in arguments ) {
+        formatted = formatted.replace("{" + arg + "}", arguments[arg]);
+    }
+    return formatted;
+};
+const SUM = arr => arr.reduce((a,b) => a + b, 0)
