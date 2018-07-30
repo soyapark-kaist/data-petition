@@ -177,7 +177,7 @@ function drawChart(inGraphType, inField, inValueFields) {
 
     data = google.visualization.arrayToDataTable( graphData );
     chart = new google.visualization.PieChart(document.getElementById('chart-container'));
-  } else if( inGraphType == "line") {
+  } else if( inGraphType == "line" || inGraphType == "area") {
     var graphData = [];
 
     // Construct x-axis
@@ -224,7 +224,10 @@ function drawChart(inGraphType, inField, inValueFields) {
     }
 
     data = google.visualization.arrayToDataTable( graphData );
-    chart = new google.visualization.LineChart(document.getElementById('chart-container'));
+
+    if(inGraphType == "line") chart = new google.visualization.LineChart(document.getElementById('chart-container'));
+    else chart = new google.visualization.AreaChart(document.getElementById('chart-container'));
+
   }
   
 
