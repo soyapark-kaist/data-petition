@@ -128,7 +128,7 @@ function prepareVizInterface(inGraphType) {
   }
 }
 
-// inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..]}
+// inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..], "field": [..]}
 function drawChart(inGraphType, inField, inValueFields) {
   var chart;
   var data;
@@ -228,6 +228,26 @@ function drawChart(inGraphType, inField, inValueFields) {
     if(inGraphType == "line") chart = new google.visualization.LineChart(document.getElementById('chart-container'));
     else chart = new google.visualization.AreaChart(document.getElementById('chart-container'));
 
+  } else if( inGraphType == "scatter" ) {
+    var graphData = [[inField]];
+
+    for( var i = 0 ; i < inValueFields.field.length; i++) {
+      graphData[0].push( inValueFields.field[i] );
+    }
+
+    for( var i = 0; i < SIGNATURE_DATA.length ; i ++) {
+      var a = [parseFloat(SIGNATURE_DATA[i][inField])];
+
+      for (var j = 0 ; j < inValueFields.field.length; j++) {
+        a.push( parseFloat(SIGNATURE_DATA[i][inValueFields.field[j]]) );
+      }
+      graphData.push( a );
+    }
+
+
+    data = google.visualization.arrayToDataTable( graphData );
+
+    chart = new google.visualization.ScatterChart(document.getElementById('chart-container'));
   }
   
 
