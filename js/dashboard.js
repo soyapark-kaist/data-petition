@@ -128,10 +128,8 @@ function prepareVizInterface(inGraphType) {
   }
 }
 
+// inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..]}
 function drawChart(inGraphType, inField, inValueFields) {
-  var graphData = [];
-
-
   var chart;
   var data;
 
@@ -145,6 +143,8 @@ function drawChart(inGraphType, inField, inValueFields) {
   ]);*/
 
   if( inGraphType == "pie") {
+    var graphData = [];
+
     // If it's count
     if ( "count" in inValueFields) {
       graphData.push([inField, 'Count for each ' + inField]);
@@ -161,13 +161,13 @@ function drawChart(inGraphType, inField, inValueFields) {
         graphData.push([key, counts[key]]);
       }
     } else { // sum of other field
-      graphData.push([inField, 'Sum of ' + inValueFields['sum']]);
+      graphData.push([inField, 'Sum of ' + inValueFields['sum'][0]]);
 
       var category_vals = new Set(getFieldVal(inField));
       var sum = {};
 
       category_vals.forEach(function(v) {
-        sum[v] = SUM( getFieldVal(inValueFields['sum'], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+        sum[v] = SUM( getFieldVal(inValueFields['sum'][0], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
       });
 
       for (var key in sum) {
@@ -177,6 +177,54 @@ function drawChart(inGraphType, inField, inValueFields) {
 
     data = google.visualization.arrayToDataTable( graphData );
     chart = new google.visualization.PieChart(document.getElementById('chart-container'));
+  } else if( inGraphType == "line") {
+    var graphData = [];
+
+    // Construct x-axis
+    var category_vals = new Set(getFieldVal(inField));
+    category_vals = Array.from(category_vals);
+    category_vals.sort();
+
+    graphData.push([inField]);
+    for (var i = 0; i < category_vals.length; i++) {
+      graphData.push([category_vals[i]]);
+    }
+
+    // y-axis
+    if ( "count" in inValueFields ) {
+      var arr = getFieldVal(inField);
+      var counts = {};
+
+      for (var i = 0; i < arr.length; i++) {
+        var val = arr[i];
+        counts[val] = counts[val] ? counts[val] + 1 : 1;
+      }
+
+      graphData[0].push( "Count of " + inField );
+      for (var i = 1; i < graphData.length; i++) {
+        graphData[i].push( graphData[i][0] in counts ? counts[graphData[i][0]] : 0 );
+      }
+    } 
+
+    if ( "sum" in inValueFields ) { // sum of other field
+      var category_vals = new Set(getFieldVal(inField));
+      for (var i = 0; i < inValueFields["sum"].length; i++) {
+        
+        var sum = {};
+
+        category_vals.forEach(function(v) {
+          sum[v] = SUM( getFieldVal(inValueFields['sum'][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+        });
+
+        graphData[0].push( "Sum of " + inValueFields["sum"][i] );
+        for (var j = 1; j < graphData.length; j++) {
+          graphData[j].push( graphData[j][0] in sum ? sum[graphData[j][0]] : 0 );
+        }
+      }
+    }
+
+    data = google.visualization.arrayToDataTable( graphData );
+    chart = new google.visualization.LineChart(document.getElementById('chart-container'));
   }
   
 
