@@ -42,11 +42,13 @@ function initClient(res) {
  */
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
+    $("#content").show();
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
 
     signupSuccess();
   } else {
+    $("#content").hide();
     authorizeButton.style.display = 'block';
     signoutButton.style.display = 'none';
   }
