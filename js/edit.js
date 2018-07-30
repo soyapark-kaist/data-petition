@@ -27,7 +27,7 @@ function displayEditForm(inRes) {
   var formEditLink = inRes["editLink"],
       publishLink = inRes["publishLink"];
 
-  appendPre('\t' + "Your petition edit link (don't share this link with unauthorized): " + formEditLink);
+  $("#display-link").html("Your petition edit link (don't share this link with unauthorized): <a href={0}>{1}</a>".format(formEditLink, formEditLink));
 
   showLoader(false);
   //TODO: refresh with the focus / update the iframe  

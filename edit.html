@@ -13,6 +13,7 @@
       <div class="nav-wrapper orange darken-3">
         <a href="/" class="brand-logo">Logo</a>
         <ul id="nav-mobile" class="right">
+            <li id="content"></li>
             <!--Add buttons to initiate auth sequence and sign out-->
             <li><a id="authorize_button" style="display: none;">Log in with Google account</a></li>
             <li><a id="signout_button" style="display: none;">Sign Out</a></li>
@@ -28,8 +29,6 @@
         </div>
         <div class="row center">
 
-          <pre id="content"></pre>
-
           <!-- <input class="authorize-only" id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" /> -->
           <input class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature" type="button" value="Edit signature"
                  onclick="window.open('http://www.website.com/page')" />
@@ -37,6 +36,7 @@
         </div>
 
         <div class="row center">
+          <p id="display-link"></p>
           <div style="width:800px;height:800px;" id="signature-container"></div>
         </div>
       </div>

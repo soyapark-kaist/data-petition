@@ -36,10 +36,12 @@ function initSignatureSummary(inRes) {
 
   SIGNATURE_DATA = inRes;
 
-  checkAvailableGraphTypes(); 
-
   google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(function() {prepareVizInterface("pie"); drawChart("pie", CATEGORY[0], {"count": true})}); // Show a basic graph initially
+
+  if (inRes.length > 0) {
+    checkAvailableGraphTypes(); 
+    google.charts.setOnLoadCallback(function() {prepareVizInterface("pie"); drawChart("pie", CATEGORY[0], {"count": true})}); // Show a basic graph initially
+  }
 
   initListener();
 
@@ -183,12 +185,3 @@ function drawChart(inGraphType, inField, inValueFields) {
   };
   chart.draw(data, options);
 }
-
-String.prototype.format = function() {
-    var formatted = this;
-    for( var arg in arguments ) {
-        formatted = formatted.replace("{" + arg + "}", arguments[arg]);
-    }
-    return formatted;
-};
-const SUM = arr => arr.reduce((a,b) => a + b, 0)
