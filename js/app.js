@@ -163,4 +163,7 @@ String.prototype.format = function() {
     }
     return formatted;
 };
-const SUM = arr => arr.reduce((a,b) => a + b, 0)
+const SUM = arr => arr.reduce((a,b) => a + b, 0);
+const MIN = arr => arr.reduce((min, p) => p < min ? p : min, data[0]);
+const MAX = arr => arr.reduce((max, p) => p > max ? p : max, data[0]);
+const AVER = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
