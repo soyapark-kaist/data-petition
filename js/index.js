@@ -19,7 +19,7 @@ function signupSuccess() {
 function createPetition() {
    showLoader(true);
 
-   callScriptFunction('createForm', [USER_EMAIL], routeToPetition);
+   callScriptFunction('createForm', [USER_EMAIL], routeToPetition, displayErrorMsg);
 }
 
 function routeToPetition(inRes) {

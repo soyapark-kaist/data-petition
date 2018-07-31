@@ -23,7 +23,8 @@ function signupSuccess() {
       return;
     }
     var formLink = "https://docs.google.com/forms/d/" + params['petition'] + "/edit?usp=sharing";
-    callScriptFunction('getSignatures', [formLink], initSignatureSummary);
+    callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
+    
   }, function(reason) {
     console.log('Error: ' + reason.result.error.message);
   });

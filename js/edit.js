@@ -8,7 +8,6 @@ function signupSuccess() {
     'requestMask.includeField': 'person.names,person.emailAddresses'
   }).then(function(response) {
     appendPre("Hi, " + response.result.names[0].givenName);
-    //callScriptFunction('createForm', [response.result.emailAddresses[0].value], displayEditForm);
 
     var params = getJsonFromUrl(true);
     if( !params['petition'] ) {
@@ -16,7 +15,7 @@ function signupSuccess() {
       return;
     }
     var formLink = "https://docs.google.com/forms/d/" + params['petition'] + "/edit?usp=sharing";
-    callScriptFunction('getPetitionLinks', [formLink], displayEditForm);
+    callScriptFunction('getPetitionLinks', [formLink], displayEditForm, displayErrorMsg);
     
   }, function(reason) {
     console.log('Error: ' + reason.result.error.message);
@@ -40,7 +39,7 @@ function displayEditForm(inRes) {
   var form_iframe = '<iframe src='+ display_link + ' width="700" height="520" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>';
   $("#signature-container").html(form_iframe);
 
-  callScriptFunction('getQuestions', [formEditLink], displayQuestions);
+  callScriptFunction('getQuestions', [formEditLink], displayQuestions, displayErrorMsg);
 } 
 
 function displayQuestions(inRes) {
