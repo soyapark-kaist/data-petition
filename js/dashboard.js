@@ -2,8 +2,8 @@ var SIGNATURE_DATA = [],
   CATEGORY = [];          // List of a field at the form which is not numeric value. 
 
 var GRAPH_TYPE = [["pie", "network"],
-                  ["bar", "line"],    // Need at least one numeric fields
-                  ["scatter", "area"]] // Need two at least two numeric fields 
+                  ["bar", "line", "area"],    // Need at least one numeric fields
+                  ["scatter"]] // Need two at least two numeric fields 
 
 /* Called when succesfully signed in */
 function signupSuccess() {

@@ -28,8 +28,6 @@ function displayEditForm(inRes) {
       publishLink = inRes["publishLink"];
 
   $("#display-link").html("Your petition edit link (don't share this link with unauthorized): <a href={0}>{1}</a>".format(formEditLink, formEditLink));
-
-  showLoader(false);
   //TODO: refresh with the focus / update the iframe  
                         // 'https://docs.google.com/forms/d/1UMGwXJ285CeUG98eME7sm1aYHBiWNUHsmhps253pPg0/edit'
                         // https://docs.google.com/forms/d/e/1FAIpQLScXsDe_D-q0wv401_x6RhaJzBo6H1o262khETRsQsullplAzw/viewform?usp=sf_link
@@ -41,7 +39,17 @@ function displayEditForm(inRes) {
   var display_link = publishLink.split("/viewform")[0] + "/viewform?embedded=true/edit";
   var form_iframe = '<iframe src='+ display_link + ' width="700" height="520" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>';
   $("#signature-container").html(form_iframe);
+
+  callScriptFunction('getQuestions', [formEditLink], displayQuestions);
 } 
+
+function displayQuestions(inRes) {
+  for (var key in inRes) {
+    $("#questions-public-setting").append('<input type="checkbox" name="questions-public" value="{0}" checked> {1} <br>'.format(inRes[key], inRes[key]));
+  }
+  
+  showLoader(false);
+}
 
 function routeToDashboard() {
   var params = getJsonFromUrl(true);
