@@ -145,3 +145,12 @@
 .option-graph-type {
     margin: 0 !important;
 }
+
+.inline-block-field {
+    display: inline-block;
+}
+
+.black-magic {
+    top: -24px;
+    position: relative;
+}
