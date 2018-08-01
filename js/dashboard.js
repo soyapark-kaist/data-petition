@@ -2,8 +2,8 @@ var SIGNATURE_DATA = [],
   CATEGORY = [];          // List of a field at the form which is not numeric value. 
 
 var GRAPH_TYPE = [["pie", "network"],
-                  ["bar", "line"],    // Need at least one numeric fields
-                  ["scatter", "area"]] // Need two at least two numeric fields 
+                  ["bar", "line", "area"],    // Need at least one numeric fields
+                  ["scatter"]] // Need two at least two numeric fields 
 
 /* Called when succesfully signed in */
 function signupSuccess() {
@@ -23,7 +23,8 @@ function signupSuccess() {
       return;
     }
     var formLink = "https://docs.google.com/forms/d/" + params['petition'] + "/edit?usp=sharing";
-    callScriptFunction('getSignatures', [formLink], initSignatureSummary);
+    callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
+    
   }, function(reason) {
     console.log('Error: ' + reason.result.error.message);
   });
@@ -128,10 +129,8 @@ function prepareVizInterface(inGraphType) {
   }
 }
 
+// inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..], "field": [..]}
 function drawChart(inGraphType, inField, inValueFields) {
-  var graphData = [];
-
-
   var chart;
   var data;
 
@@ -145,6 +144,8 @@ function drawChart(inGraphType, inField, inValueFields) {
   ]);*/
 
   if( inGraphType == "pie") {
+    var graphData = [];
+
     // If it's count
     if ( "count" in inValueFields) {
       graphData.push([inField, 'Count for each ' + inField]);
@@ -161,13 +162,13 @@ function drawChart(inGraphType, inField, inValueFields) {
         graphData.push([key, counts[key]]);
       }
     } else { // sum of other field
-      graphData.push([inField, 'Sum of ' + inValueFields['sum']]);
+      graphData.push([inField, 'Sum of ' + inValueFields['sum'][0]]);
 
       var category_vals = new Set(getFieldVal(inField));
       var sum = {};
 
       category_vals.forEach(function(v) {
-        sum[v] = SUM( getFieldVal(inValueFields['sum'], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+        sum[v] = SUM( getFieldVal(inValueFields['sum'][0], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
       });
 
       for (var key in sum) {
@@ -177,6 +178,78 @@ function drawChart(inGraphType, inField, inValueFields) {
 
     data = google.visualization.arrayToDataTable( graphData );
     chart = new google.visualization.PieChart(document.getElementById('chart-container'));
+  } else if( inGraphType == "line" || inGraphType == "area" || inGraphType == "bar") {
+    var graphData = [];
+
+    // Construct x-axis
+    var category_vals = new Set(getFieldVal(inField));
+    category_vals = Array.from(category_vals);
+    category_vals.sort();
+
+    graphData.push([inField]);
+    for (var i = 0; i < category_vals.length; i++) {
+      graphData.push([category_vals[i]]);
+    }
+
+    // y-axis
+    if ( "count" in inValueFields ) {
+      var arr = getFieldVal(inField);
+      var counts = {};
+
+      for (var i = 0; i < arr.length; i++) {
+        var val = arr[i];
+        counts[val] = counts[val] ? counts[val] + 1 : 1;
+      }
+
+      graphData[0].push( "Count of " + inField );
+      for (var i = 1; i < graphData.length; i++) {
+        graphData[i].push( graphData[i][0] in counts ? counts[graphData[i][0]] : 0 );
+      }
+    } 
+
+    if ( "sum" in inValueFields ) { // sum of other field
+      var category_vals = new Set(getFieldVal(inField));
+      for (var i = 0; i < inValueFields["sum"].length; i++) {
+        
+        var sum = {};
+
+        category_vals.forEach(function(v) {
+          sum[v] = SUM( getFieldVal(inValueFields['sum'][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+        });
+
+        graphData[0].push( "Sum of " + inValueFields["sum"][i] );
+        for (var j = 1; j < graphData.length; j++) {
+          graphData[j].push( graphData[j][0] in sum ? sum[graphData[j][0]] : 0 );
+        }
+      }
+    }
+
+    data = google.visualization.arrayToDataTable( graphData );
+
+    if(inGraphType == "line") chart = new google.visualization.LineChart(document.getElementById('chart-container'));
+    else if(inGraphType == "area") chart = new google.visualization.AreaChart(document.getElementById('chart-container'));
+    else chart = new google.visualization.BarChart(document.getElementById('chart-container'));
+
+  } else if( inGraphType == "scatter" ) {
+    var graphData = [[inField]];
+
+    for( var i = 0 ; i < inValueFields.field.length; i++) {
+      graphData[0].push( inValueFields.field[i] );
+    }
+
+    for( var i = 0; i < SIGNATURE_DATA.length ; i ++) {
+      var a = [parseFloat(SIGNATURE_DATA[i][inField])];
+
+      for (var j = 0 ; j < inValueFields.field.length; j++) {
+        a.push( parseFloat(SIGNATURE_DATA[i][inValueFields.field[j]]) );
+      }
+      graphData.push( a );
+    }
+
+
+    data = google.visualization.arrayToDataTable( graphData );
+
+    chart = new google.visualization.ScatterChart(document.getElementById('chart-container'));
   }
   
 

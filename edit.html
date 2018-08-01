@@ -25,10 +25,10 @@
       <div class="container">
         <h1 class="header center orange-text">Create your petition</h1>
         <div class="row center">
-          <h5 class="header col s12 light">Let's go CHI! WOW!</h5>
+          
         </div>
         <div class="row center">
-
+          
           <!-- <input class="authorize-only" id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" /> -->
           <input class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature" type="button" value="Edit signature"
                  onclick="window.open('http://www.website.com/page')" />
@@ -37,6 +37,18 @@
 
         <div class="row center">
           <p id="display-link"></p>
+
+          <h5 class="header col s12 light">Signature Questions</h5>
+          Choose which questions are public or not. Response of public questions will be visible to other users and they can use it for their visualization. Unmark personal information (e.g. name, contact) to make it private.
+          <div id="questions-public-setting">
+            public?<br/>
+          </div>
+
+          
+        </div>
+
+        <div class="row center">
+          <h5 class="header col s12 light">Signature Preview</h5>
           <div style="width:800px;height:800px;" id="signature-container"></div>
         </div>
       </div>

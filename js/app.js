@@ -84,10 +84,10 @@ function appendPre(message) {
 var scriptId = "1LkBObf9fn_8dylXxoYp0A53aUYkjHoRYWeVbMvkdfybJK6UA2FpoPR1L";
 
 function checkAuthority() {
-  callScriptFunction('getEditors', [response.result.emailAddresses[0].value], displayEditForm);
+  callScriptFunction('getEditors', [response.result.emailAddresses[0].value], displayEditForm, displayErrorMsg);
 }
 
-function callScriptFunction(inFunctionName, inParams, inOnSuccess) {
+function callScriptFunction(inFunctionName, inParams, inOnSuccess, inOnFail) {
   gapi.client.script.scripts.run({
     'scriptId': scriptId,
     'resource': {
@@ -99,8 +99,9 @@ function callScriptFunction(inFunctionName, inParams, inOnSuccess) {
     if (result.error && result.error.status) {
       // The API encountered a problem before the script
       // started executing.
-      appendPre('Error calling API:');
-      appendPre(JSON.stringify(result, null, 2));
+      console.log('Error calling API:');
+      console.log(JSON.stringify(result, null, 2));
+      inOnFail(result.response.result);
     } else if (result.error) {
       // The API executed, but the script returned an error.
 
@@ -108,23 +109,34 @@ function callScriptFunction(inFunctionName, inParams, inOnSuccess) {
       // The values of this object are the script's 'errorMessage' and
       // 'errorType', and an array of stack trace elements.
       var error = result.error.details[0];
-      appendPre('Script error message: ' + error.errorMessage);
+      console.log('Script error message: ' + error.errorMessage);
 
       if (error.scriptStackTraceElements) {
         // There may not be a stacktrace if the script didn't start
         // executing.
-        appendPre('Script error stacktrace:');
+        console.log('Script error stacktrace:');
         for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
           var trace = error.scriptStackTraceElements[i];
-          appendPre('\t' + trace.function + ':' + trace.lineNumber);
+          console.log('\t' + trace.function + ':' + trace.lineNumber);
         }
       }
+
+      inOnFail(error.errorMessage);
     } else {
       inOnSuccess(result.response.result);
     }
   });
 }
 // [END apps_script_execute]
+
+function displayErrorMsg(inRes) {
+  $(".section .container").html('<h1 class="header center orange-text">Something went wrong :(</h1>');
+
+  if ( inRes.includes("No item with the given ID could be found, or you do not have permission to access it.") )
+    $(".section .container").append('<h5 class="header col s12 light">No item with this petition URL could be found, or you do not have permission to access it.</h5>');
+
+  showLoader(false);
+}
 
 function getJsonFromUrl(hashBased) {
   var query;
@@ -163,4 +175,7 @@ String.prototype.format = function() {
     }
     return formatted;
 };
-const SUM = arr => arr.reduce((a,b) => a + b, 0)
+const SUM = arr => arr.reduce((a,b) => a + b, 0);
+const MIN = arr => arr.reduce((min, p) => p < min ? p : min, data[0]);
+const MAX = arr => arr.reduce((max, p) => p > max ? p : max, data[0]);
+const AVER = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
