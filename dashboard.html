@@ -114,26 +114,45 @@
             </div>
           </div> -->
         </div>
-        
-        <div id="viz-container">
-          <div id="line-interface" graph-type="line">
-            <select class="select-category">
-            </select>
+        <div class="row">
+          <div class="col s12 m8 offset-m2" id="viz-container">
+            <div class="card">
+              <div class="card-content">
+                <span class="card-title">Option</span>
+                <div id="line-interface" graph-type="line">
+                  <div class="input-field">
+                    <select class="select-category">
+                    </select>
+                  </div>
+                  <div class="value-select-container"></div>
+                </div>
 
-            <div class="value-select-container"></div>
+                <div id="pie-interface" graph-type="pie">
+                  <div class="input-field">
+                    <select class="select-category">
+                    </select>
+                  </div>
+                  <p><label>
+                    <input type="radio" name="pie-radio" value="count" id="pie-0" checked/> 
+                    <span>Count of Category</span>
+                  </label></p>
+                  <br />
+                  <p><label>
+                    <input type="radio" name="pie-radio" value="other" id="pie-1"/> 
+                    <span>
+                      <span class="black-magic">
+                        Sum of &nbsp;
+                        <span class="inline-block-field input-field"><select class="select-value"></select></span>
+                      </span>
+                    </span>
+                  </label></p>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div id="pie-interface" graph-type="pie">
-            <select class="select-category">
-            </select>
-
-            <input type="radio" name="pie-radio" value="count" id="pie-0" checked/> 
-            <label for="pie-0">Count of Category</label><br/>
-
-            <input type="radio" name="pie-radio" value="other" id="pie-1"/> 
-            <label for="pie-1">Sum of <select class="select-value"></select></label>
+          <div class="col s12">
+            <div id="chart-container" style="width: 900px; height: 500px;"></div>
           </div>
-          <div id="chart-container" style="width: 900px; height: 500px;"></div>
         </div>
       </div>
     </div>

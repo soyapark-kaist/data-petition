@@ -118,9 +118,6 @@ function displayGraph(inGraphType, inFieldArray) {
 function prepareVizInterface(inGraphType) {
   $("#{0}-interface select".format(inGraphType)).empty();
 
-  // TODO remove it
-  $("#{0}-interface select".format(inGraphType)).show();
-
   for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
     if ( CATEGORY.includes(key) )
       $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
@@ -257,4 +254,11 @@ function drawChart(inGraphType, inField, inValueFields) {
       title: graphData[0][1]
   };
   chart.draw(data, options);
+  initialize_materialize_css();
+}
+
+function initialize_materialize_css() {
+  console.log('initialize')
+  var elems = document.querySelectorAll('select');
+  var instances = M.FormSelect.init(elems, {});
 }

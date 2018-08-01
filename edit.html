@@ -35,17 +35,25 @@
           <button id="btn_view_summary" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">View summary</button>
         </div>
 
-        <div class="row center">
+        <div class="row">
           <p id="display-link"></p>
+
+          <div class="divider"></div>
 
           <h5 class="header col s12 light">Signature Questions</h5>
           Choose which questions are public or not. Response of public questions will be visible to other users and they can use it for their visualization. Unmark personal information (e.g. name, contact) to make it private.
-          <div id="questions-public-setting">
-            public?<br/>
-          </div>
 
-          
+          <div class="left-align col m6 offset-m3 s12">
+            <div class="card">
+              <div class="card-content">
+                <span class="card-title">public?</span>
+                <div id="questions-public-setting"></div>
+              </div>
+            </div>
+          </div>
         </div>
+        
+        <div class="divider"></div>
 
         <div class="row center">
           <h5 class="header col s12 light">Signature Preview</h5>
