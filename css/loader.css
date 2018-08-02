@@ -155,6 +155,11 @@
     position: relative;
 }
 
+
 [mv-app] button.mv-add {
     display: none;
+}
+
+.narrow-card-action {
+    padding: 5px !important;
 }
