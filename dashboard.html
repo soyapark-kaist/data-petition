@@ -193,8 +193,15 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
       var elems = document.querySelectorAll('.modal');
-      var instances = M.Modal.init(elems, {});
+      var instances = M.Modal.init(elems, {
+        'onCloseEnd': () => {
+          removeHighlightFromCards('orange lighten-4');
+        }
+      });
       addModalClickEventListener('.modal-trigger', function(event, arguments /* Array */){
+        var card = getCardFromClickEvent(event);
+        $(card).addClass('orange lighten-4');
+
         var modal_header = document.getElementsByClassName('modal-header')[0];
         var modal_body = document.getElementsByClassName('modal-body')[0];
         console.log(event);

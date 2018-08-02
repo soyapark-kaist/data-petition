@@ -271,3 +271,18 @@ function addModalClickEventListener(query, func, ...args) {
     })
   }
 }
+
+function getCardFromClickEvent(event) {
+  if (event.srcElement.nodeName == 'IMG') {
+    return event.srcElement.parentElement.parentElement.parentElement;
+  } else if (event.srcElement.nodeName == 'A') {
+    return event.srcElement.parentElement.parentElement;
+  }
+}
+
+function removeHighlightFromCards(className) {
+  var elements = document.getElementsByClassName('card');
+  for (var i = 0; i < elements.length; i++) {
+    $(elements[i]).removeClass(className);
+  }
+}
