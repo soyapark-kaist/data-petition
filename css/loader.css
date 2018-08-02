@@ -154,3 +154,7 @@
     top: -24px;
     position: relative;
 }
+
+[mv-app] button.mv-add {
+    display: none;
+}
