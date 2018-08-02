@@ -262,3 +262,27 @@ function initialize_materialize_css() {
   var elems = document.querySelectorAll('select');
   var instances = M.FormSelect.init(elems, {});
 }
+
+function addModalClickEventListener(query, func, ...args) {
+  var elements = document.querySelectorAll(query);
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].addEventListener('click', (e) => {
+      func(e, args);
+    })
+  }
+}
+
+function getCardFromClickEvent(event) {
+  if (event.srcElement.nodeName == 'IMG') {
+    return event.srcElement.parentElement.parentElement.parentElement;
+  } else if (event.srcElement.nodeName == 'A') {
+    return event.srcElement.parentElement.parentElement;
+  }
+}
+
+function removeHighlightFromCards(className) {
+  var elements = document.getElementsByClassName('card');
+  for (var i = 0; i < elements.length; i++) {
+    $(elements[i]).removeClass(className);
+  }
+}
