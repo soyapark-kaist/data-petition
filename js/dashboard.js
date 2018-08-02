@@ -262,3 +262,12 @@ function initialize_materialize_css() {
   var elems = document.querySelectorAll('select');
   var instances = M.FormSelect.init(elems, {});
 }
+
+function addModalClickEventListener(query, func, ...args) {
+  var elements = document.querySelectorAll(query);
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].addEventListener('click', (e) => {
+      func(e, args);
+    })
+  }
+}
