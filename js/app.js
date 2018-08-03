@@ -48,13 +48,22 @@ function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     $("#content").show();
 
+    $("#msg_request_login").hide();
     $("#btn_google_signin").hide();
+
+    $("#main-area").show();
+
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
 
     signupSuccess();
   } else {
     $("#content").hide();
+
+    $("#msg_request_login").show();
+
+    $("#main-area").hide();
+
     authorizeButton.style.display = 'block';
     signoutButton.style.display = 'none';
   }
@@ -142,6 +151,10 @@ function displayErrorMsg(inRes) {
     $(".section .container").append('<h5 class="header col s12 light">No item with this petition URL could be found, or you do not have permission to access it.</h5>');
 
   showLoader(false);
+}
+
+function displayRequestLogin(inRes) {
+
 }
 
 function getJsonFromUrl(hashBased) {
