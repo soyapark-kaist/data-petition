@@ -51,9 +51,6 @@ function displayQuestions(inRes) {
 
   var params = getJsonFromUrl(true);
   
-  // var questionRef = firebase.database().ref("petition/" + params['petition']);
-  // petition/[petitionID]
-
   // starCountRef.on('value', function(snapshot) {
   //   updateStarCount(postElement, snapshot.val());
   // });
@@ -62,29 +59,55 @@ function displayQuestions(inRes) {
   // updates["/question"]
   // questionRef.update();
 
-  // playersRef.once("value").then(function(snapshot) {
-  //   var p = snapshot.val();
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
+  // petition/[petitionID]
 
-  //   console.log(p);
-  //   // TODO if inRes is not at DB yet, then add. 
-  //   $("#petition-container").attr("mv-app", "petition/" + params['petition']);
-  // });
+  questionRef.once("value").then(function(snapshot) {
+    var questions = snapshot.val() ? snapshot.val() : [];
+    var data_to_update = {};
+    var onSuccess = function() {};
 
-  var d = {};
+    console.log(questions);
+    if(!questions.length) onSuccess = function() {location.reload();};
+    // TODO if inRes is not at DB yet, then add. 
+    var questionID = [];
+    for(var key in questions) {
+      questionID.push( questions[key].id );
+    }
 
-  for (var key in inRes) {
-    d[key] = {"done": true, "title": inRes[key]};
+    var index = questions.length;
 
-  }
+    for (var key in inRes) {
+      if( !questionID.includes(key) )
+        data_to_update[index++] = {"done": true, "title": inRes[key], "id": key};
+    } 
 
-  pushQuestions("petition/" + params['petition'], {"question": d});
+    updateDB("petition/" + params['petition'] + "/question", data_to_update, onSuccess);
 
+  });
+  
   showLoader(false);
 }
 
-function pushQuestions(inRef, inData) {
+function updateDB(inRef, inData, inOnSuccess) {
   var playersRef = firebase.database().ref(inRef);
   // users/2017-3-6
+
+  playersRef.update(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              inOnSuccess();
+          }
+
+      });
+}
+
+function setDB(inRef, inData) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+  debugger;
 
   playersRef.set(inData,
       function(error) {

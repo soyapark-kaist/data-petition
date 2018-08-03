@@ -33,7 +33,8 @@ function initClient(res) {
     // Handle the initial sign-in state.
     updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
     authorizeButton.onclick = handleAuthClick;
-    googleSigninButton.onclick = handleAuthClick;
+    if (googleSigninButton)
+      googleSigninButton.onclick = handleAuthClick;
 
     signoutButton.onclick = handleSignoutClick;
   });
