@@ -43,13 +43,59 @@ function displayEditForm(inRes) {
 } 
 
 function displayQuestions(inRes) {
-  for (var key in inRes) {
-    $("#questions-public-setting").append(
-      '<p><label mv-multiple property=""> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span>{1}</span> </label></p>'.format(inRes[key], inRes[key])
-    );
-  }
+  // for (var key in inRes) {
+  //   $("#questions-public-setting").append(
+  //     '<p><label mv-multiple property=""> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span>{1}</span> </label></p>'.format(inRes[key], inRes[key])
+  //   );
+  // }
+
+  var params = getJsonFromUrl(true);
   
+  // var questionRef = firebase.database().ref("petition/" + params['petition']);
+  // petition/[petitionID]
+
+  // starCountRef.on('value', function(snapshot) {
+  //   updateStarCount(postElement, snapshot.val());
+  // });
+
+  //var updates = {};
+  // updates["/question"]
+  // questionRef.update();
+
+  // playersRef.once("value").then(function(snapshot) {
+  //   var p = snapshot.val();
+
+  //   console.log(p);
+  //   // TODO if inRes is not at DB yet, then add. 
+  //   $("#petition-container").attr("mv-app", "petition/" + params['petition']);
+  // });
+
+  var d = {};
+
+  for (var key in inRes) {
+    d[key] = {"done": true, "title": inRes[key]};
+
+  }
+
+  pushQuestions("petition/" + params['petition'], {"question": d});
+
   showLoader(false);
+}
+
+function pushQuestions(inRef, inData) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+
+  playersRef.set(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              console.log("push to DB", inData);
+              $("#petition-container").attr("mv-app", inRef);
+          }
+
+      });
 }
 
 function routeToDashboard() {

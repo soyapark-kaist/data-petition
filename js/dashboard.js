@@ -274,9 +274,9 @@ function addModalClickEventListener(query, func, ...args) {
 
 function getCardFromClickEvent(event) {
   if (event.target.nodeName == 'IMG') {
-    return event.srcElement.parentElement.parentElement.parentElement;
-  } else if (event.srcElement.nodeName == 'A') {
-    return event.srcElement.parentElement.parentElement;
+    return event.target.parentElement.parentElement.parentElement;
+  } else if (event.target.nodeName == 'A') {
+    return event.target.parentElement.parentElement;
   }
 }
 

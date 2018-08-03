@@ -5,7 +5,8 @@ var DISCOVERY_DOCS = ["https://script.googleapis.com/$discovery/rest?version=v1"
 // included, separated by spaces.
 var SCOPES = 'https://www.googleapis.com/auth/script.projects https://www.googleapis.com/auth/forms https://www.googleapis.com/auth/script.send_mail https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email profile';
 
-var authorizeButton = document.getElementById('authorize_button');
+var authorizeButton = document.getElementById('authorize_button'),
+  googleSigninButton = document.getElementById('btn_google_signin');
 var signoutButton = document.getElementById('signout_button');
 
 /**
@@ -32,6 +33,8 @@ function initClient(res) {
     // Handle the initial sign-in state.
     updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
     authorizeButton.onclick = handleAuthClick;
+    googleSigninButton.onclick = handleAuthClick;
+
     signoutButton.onclick = handleSignoutClick;
   });
 }
@@ -43,6 +46,8 @@ function initClient(res) {
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     $("#content").show();
+
+    $("#btn_google_signin").hide();
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
 

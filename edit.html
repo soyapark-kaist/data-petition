@@ -39,14 +39,13 @@
           <button id="btn_view_summary" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">View summary</button>
         </div>
 
-        <div class="row" mv-app="petition" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="local">
-        <!-- mv-storage="firebase" mv-server-push mv-autosave -->
+        <div id="petition-container" class="row" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="firebase" mv-server-push mv-autosave>
           <p id="display-link"></p>
 
           <div class="divider"></div>
 
-          <h5 property="petition-title" class="header col s12 light">My petition title</h5>
-
+          <h5 property="petition-title" class="header col s12 light" style="display:inline-block;">My petition title</h5>
+          
           <h5 class="header col s12 light">Content</h5>
           Need rich text editor here. <br/>
 
@@ -60,7 +59,7 @@
                 <span class="card-title">public?</span>
                 <div id="questions-public-setting">
                   <p mv-multiple property="question">
-                    <label> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span property="title"></span> </label>
+                    <label> <input property="done" type="checkbox" name="questions-public" checked="checked"> <span property="title"></span> </label>
                   </p>
                 </div>
               </div>
@@ -84,17 +83,24 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
-
-    <script type="text/javascript" src="js/lib/mavo.js"></script>
-    <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
 
     <script type="text/javascript" src="js/privacy.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
 
+    <script>
+      var params = getJsonFromUrl(true);
+      $("#petition-container").attr("mv-app", "petition/" + params['petition']);
+    </script>
+
     <script type="text/javascript" src="js/edit.js"></script>
+
+    <script type="text/javascript" src="js/lib/mavo.js"></script>
+    <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
     
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
