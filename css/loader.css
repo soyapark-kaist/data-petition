@@ -163,3 +163,7 @@
 .narrow-card-action {
     padding: 5px !important;
 }
+
+.mv-item-bar.mv-ui {
+    display: none;
+}
