@@ -22,7 +22,7 @@ function signupSuccess() {
       alert("This petition not exist!")
       return;
     }
-    var formLink = "https://docs.google.com/forms/d/" + params['petition'] + "/edit?usp=sharing";
+    var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
     callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
     
   }, function(reason) {
@@ -41,7 +41,7 @@ function initSignatureSummary(inRes) {
 
   if (inRes.length > 0) {
     checkAvailableGraphTypes(); 
-    google.charts.setOnLoadCallback(function() {prepareVizInterface("pie"); drawChart("pie", CATEGORY[0], {"count": true})}); // Show a basic graph initially
+    google.charts.setOnLoadCallback(function() {}); // Show a basic graph initially
   }
 
   initListener();
@@ -58,6 +58,33 @@ function initListener() {
   $('select.select-value').on('change', function() {
     drawChart( $(this).parents('div')[0].getAttribute('graph-type'), $($(this).parent()[0]).siblings('.select-category').val(), {"sum": this.value} );
   })
+
+  var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, {
+      'onCloseEnd': () => {
+        removeHighlightFromCards('orange lighten-4');
+      }
+    });
+    addModalClickEventListener('.modal-trigger', function(event, arguments /* Array */){
+      var card = getCardFromClickEvent(event);
+      $(card).addClass('orange lighten-4');
+
+      var modal_header = document.getElementsByClassName('modal-header')[0];
+      var modal_body = document.getElementsByClassName('modal-body')[0];
+      console.log(event);
+      console.log(arguments);
+      /* Add your codes */
+
+      var graph_type = $(card).attr("graph-type");
+      prepareVizInterface( graph_type ); 
+
+      if(graph_type != "scatter")
+        drawChart(graph_type, CATEGORY[0], {"count": true});
+    }, 1, 2, 3 /* Arguments */);
+
+  // document.addEventListener('DOMContentLoaded', function() {
+
+  // });
 }
 
 function checkAvailableGraphTypes() {
