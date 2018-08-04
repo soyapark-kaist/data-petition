@@ -106,6 +106,25 @@ function computeCategory() {
   }
 }
 
+function countLetter(inElement) {
+    var postLength = detectBrowser() == 'ie' ? inElement.textContent.length : inElement.textLength;
+    var charactersLeft = 140 - postLength;
+    inElement.getElementsByClassName("status-box");
+
+    var counter = inElement.parentElement.parentElement.parentElement.getElementsByClassName("counter")[0];
+    counter.innerHTML = charactersLeft;
+
+    if (charactersLeft < 0) {
+        inElement.parentElement.parentElement.parentElement.getElementsByClassName("comments-post")[0].classList += " disabled";
+        counter.classList += " minus-counter";
+    } else if (charactersLeft == 140) {
+        inElement.parentElement.parentElement.parentElement.getElementsByClassName("comments-post")[0].classList += " disabled";
+    } else {
+        inElement.parentElement.parentElement.parentElement.getElementsByClassName("comments-post")[0].classList.remove("disabled");
+        counter.classList.remove("minus-counter");
+    }
+}
+
 function getFieldVal(inField, inCondition=function(r){ return true;}) {
   var arr = []
   for(var i = 0; i < SIGNATURE_DATA.length; i++) {

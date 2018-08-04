@@ -167,3 +167,12 @@
 .mv-item-bar.mv-ui {
     display: none;
 }
+
+.counter {
+    display: inline;
+    margin-right: 10px;
+}
+
+.post-button-group {
+    display: inline-block;float: right;
+}
