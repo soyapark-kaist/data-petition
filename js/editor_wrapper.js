@@ -4,7 +4,6 @@ function getContents(editor) {
     /* Returns 'delta' object.
     Refer to https://quilljs.com/docs/delta/ */
     var delta = editor.getContents();
-    debugger;
     return delta;
 }
 

@@ -107,6 +107,14 @@
     <!-- Initialize Quill editor -->
     <script>
       var editor = new Quill('#editor', {
+        modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['link', 'image', 'code-block']
+        ]
+      },
         theme: 'snow',
         placeholder: 'Fill your petition content here...',
       });
