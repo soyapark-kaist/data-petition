@@ -115,7 +115,6 @@ function setDB(inRef, inData) {
               console.log(error);
           } else {
               console.log("push to DB", inData);
-              $("#petition-container").attr("mv-app", inRef);
           }
 
       });

@@ -133,10 +133,13 @@
       });
 
       /* API Usage, refer to js/editor_wrapper.js for more information. */
-      setText(editor, 'Wow This is the test text.')
+      // setText(editor, 'Wow This is the test text.')
       console.log(getText(editor));
       addEditingStopEventListener(() => {
         console.log('Wow This is the test callback.')
+
+        // Save contetns to DB. 
+        setDB("petition/" + params["petition"] + "/contents", getContents(editor));
       }) 
     </script>
 
