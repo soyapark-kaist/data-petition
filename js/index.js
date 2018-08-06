@@ -23,7 +23,7 @@ function createPetition() {
 }
 
 function routeToPetition(inRes) {
-	var param = inRes["editLink"].split("/d/")[1].split("/")[0];
+	var param = inRes["editLink"].split("/d/")[1].split("/")[0].split("/")[0];
 
 	window.location.href = './edit.html?petition=' + param;
 }
