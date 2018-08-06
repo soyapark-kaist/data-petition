@@ -54,6 +54,11 @@ function prepareDrawChart( inEvent ) {
   var graph_type = inEvent.parents('.graph-options').attr('graph-type');
   var o = getSelectedOption( graph_type );
 
+  if ( graph_type == "area" || graph_type == "line" || graph_type == "bar") {
+    $("#{0}-interface .y-axis div".format(graph_type)).first().attr( "value", o.x[0] );
+    $("#{0}-interface .y-axis p".format(graph_type)).first().text( o.x[0] );
+  }
+
   drawChart( graph_type, o.x[0], o.y );
 }
 
@@ -191,6 +196,31 @@ function prepareVizInterface(inGraphType) {
         $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
     }
   }
+
+  else {
+    var $div = $("<div value={0}></div>".format(CATEGORY[0]));
+    $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
+    $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
+
+    $("#{0}-interface .y-axis".format(inGraphType)).append( $div ); 
+    // $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
+
+    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+      if ( CATEGORY.includes(key) ) {
+        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+      }
+      else {
+        $div = $("<div class='y-value-wrapper' value='{0}''></div>".format(key));
+        $div.append( '<p>{0}</p>'.format(key) ); 
+
+        $.each([ 'min', 'max', 'avg', 'sum' ], function( index, value ) {
+          $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format(value, value) );    
+        });    
+        
+        $("#{0}-interface .y-axis".format(inGraphType)).append( $div );
+      }
+    }
+  }
   
   initialize_materialize_css();
 }
@@ -258,34 +288,41 @@ function drawChart(inGraphType, inField, inValueFields) {
     }
 
     // y-axis
-    if ( "count" in inValueFields ) {
-      var arr = getFieldVal(inField);
-      var counts = {};
+    for(var key in inValueFields) {
+      if (key == "count") {
+        var arr = getFieldVal(inField);
+        var counts = {};
 
-      for (var i = 0; i < arr.length; i++) {
-        var val = arr[i];
-        counts[val] = counts[val] ? counts[val] + 1 : 1;
-      }
+        for (var i = 0; i < arr.length; i++) {
+          var val = arr[i];
+          counts[val] = counts[val] ? counts[val] + 1 : 1;
+        }
 
-      graphData[0].push( "Count of " + inField );
-      for (var i = 1; i < graphData.length; i++) {
-        graphData[i].push( graphData[i][0] in counts ? counts[graphData[i][0]] : 0 );
-      }
-    } 
+        graphData[0].push( "Count of " + inField );
+        for (var i = 1; i < graphData.length; i++) {
+          graphData[i].push( graphData[i][0] in counts ? counts[graphData[i][0]] : 0 );
+        }
+      } else {
+        var category_vals = new Set(getFieldVal(inField));
+        for (var i = 0; i < inValueFields[key].length; i++) {
+          
+          var arr = {};
 
-    if ( "sum" in inValueFields ) { // sum of other field
-      var category_vals = new Set(getFieldVal(inField));
-      for (var i = 0; i < inValueFields["sum"].length; i++) {
-        
-        var sum = {};
+          category_vals.forEach(function(v) {
+            if( key == "sum")
+              arr[v] = SUM( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+            else if( key == "min")
+              arr[v] = MIN( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+            else if( key == "max")
+              arr[v] = MAX( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+            else if( key == "avg")
+              arr[v] = AVER( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+          });
 
-        category_vals.forEach(function(v) {
-          sum[v] = SUM( getFieldVal(inValueFields['sum'][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
-        });
-
-        graphData[0].push( "Sum of " + inValueFields["sum"][i] );
-        for (var j = 1; j < graphData.length; j++) {
-          graphData[j].push( graphData[j][0] in sum ? sum[graphData[j][0]] : 0 );
+          graphData[0].push( key + " of " + inValueFields[key][i] );
+          for (var j = 1; j < graphData.length; j++) {
+            graphData[j].push( graphData[j][0] in arr ? arr[graphData[j][0]] : 0 );
+          }
         }
       }
     }
@@ -339,9 +376,16 @@ function getSelectedOption( inGraphType ) {
       for (var i = 0; i < res.x.length ; i++) {
         'count' in res['y'] ? res['y']['count'].push(res.x[i]) : res['y'] = {"count": [res.x[i]]};
       }
-    } else if (v == "sum") { 
-      var s = $($(this).parent()[0]).find('.select-dropdown').get(0).value;
-      'sum' in res['y'] ? res['y']['sum'].push(s) : res['y']['sum'] = [s];
+    } else if ( ["min", "max", "sum", "avg"].includes(v) ) { 
+      if( inGraphType == "pie") {
+        var s = $($(this).parent()[0]).find('.select-dropdown').get(0).value;
+        v in res['y'] ? res['y'][v].push(s) : res['y'][v] = [s];
+      }
+      else {
+        var s = $(this).parents(".y-value-wrapper")[0].getAttribute('value');
+        v in res['y'] ? res['y'][v].push(s) : res['y'][v] = [s];
+      }
+      
     } else {
       if ( inGraphType == "scatter" )
         'field' in res['y'] ? res['y']['field'].push(v) : res['y']['field'] = [v];
