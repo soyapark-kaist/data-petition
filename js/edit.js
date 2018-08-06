@@ -45,7 +45,7 @@ function displayEditForm(inRes) {
 function displayQuestions(inRes) {
   for (var key in inRes) {
     $("#questions-public-setting").append(
-      '<p><label> <input type="checkbox" name="questions-public" value="{0}" checked="checked"> <span>{1}</span> </label></p>'.format(inRes[key], inRes[key])
+      '<p><label mv-multiple property=""> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span>{1}</span> </label></p>'.format(inRes[key], inRes[key])
     );
   }
   

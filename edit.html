@@ -3,10 +3,13 @@
   <head>
     <title>Data-driven petition</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="css/loader.css"/>
+    
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://dev.mavo.io/dist/mavo.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/loader.css"/>
   </head>
   <body>
     <nav>
@@ -32,23 +35,34 @@
           <!-- <input class="authorize-only" id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" /> -->
           <input class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature" type="button" value="Edit signature"
                  onclick="window.open('http://www.website.com/page')" />
-          <button id="btn_view_summary" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">Add collaborators</button>
+          <button id="btn_add_collaborators" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">Add collaborators</button>
           <button id="btn_view_summary" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">View summary</button>
         </div>
 
-        <div class="row">
+        <div class="row" mv-app="petition" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="local">
+        <!-- mv-storage="firebase" mv-server-push mv-autosave -->
           <p id="display-link"></p>
 
           <div class="divider"></div>
 
+          <h5 property="petition-title" class="header col s12 light">My petition title</h5>
+
+          <div id="editor">
+          </div>
+
           <h5 class="header col s12 light">Signature Questions</h5>
           Choose which questions are public or not. Response of public questions will be visible to other users and they can use it for their visualization. Unmark personal information (e.g. name, contact) to make it private.
+
 
           <div class="left-align col m6 offset-m3 s12">
             <div class="card">
               <div class="card-content">
                 <span class="card-title">public?</span>
-                <div id="questions-public-setting"></div>
+                <div id="questions-public-setting">
+                  <p mv-multiple property="question">
+                    <label> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span property="title"></span> </label>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -73,6 +87,9 @@
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
 
+    <script type="text/javascript" src="js/lib/mavo.js"></script>
+    <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
+
     <script type="text/javascript" src="js/privacy.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
@@ -84,5 +101,31 @@
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
     
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script type="text/javascript" src="js/editor_wrapper.js"></script>
+
+    <!-- Initialize Quill editor -->
+    <script>
+      var editor = new Quill('#editor', {
+        modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['link', 'image', 'code-block']
+        ]
+      },
+        theme: 'snow',
+        placeholder: 'Fill your petition content here...',
+      });
+
+      /* API Usage, refer to js/editor_wrapper.js for more information. */
+      setText(editor, 'Wow This is the test text.')
+      console.log(getText(editor));
+      addEditingStopEventListener(() => {
+        console.log('Wow This is the test callback.')
+      }) 
+    </script>
+
   </body>
 </html>
