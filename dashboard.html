@@ -37,7 +37,7 @@
           <h4 id="msg-no-available-chart" style="display: none;">There's no available chart with current responses!</h4>
         </div>
 
-        <div class="row">
+        <div class="row modal-select">
 
           <div class="col s4 m2 offset-m3">
             <div class="card" graph-type="scatter">
@@ -131,7 +131,7 @@
     <!-- Modal Structure -->
     <div id="modal-for-chart" class="modal">
       <div class="modal-content">
-        <h4 class="modal-header">Modal Header</h4>
+        <!-- <h4 class="modal-header">Modal Header</h4> -->
         <div class="modal-body">
           <div class="col s12 m8 offset-m2" id="viz-container">
             <div class="card">
@@ -139,7 +139,7 @@
                 <span class="card-title">Option</span>
                 <div id="scatter-interface" class="graph-options" graph-type="scatter">
                   <div class="input-field">
-                    <select class="select-category x-axis">
+                    <select class="x-axis">
                     </select>
                   </div>
                   <div class="value-select-container y-axis">
@@ -148,7 +148,7 @@
 
                 <div id="line-interface" class="graph-options" graph-type="line">
                   <div class="input-field">
-                    <select class="select-category">
+                    <select class="x-axis">
                     </select>
                   </div>
                   <div class="value-select-container"></div>
@@ -156,23 +156,25 @@
 
                 <div id="pie-interface" class="graph-options" graph-type="pie">
                   <div class="input-field">
-                    <select class="select-category">
+                    <select class="x-axis">
                     </select>
                   </div>
-                  <p><label>
-                    <input type="radio" name="pie-radio" value="count" id="pie-0" checked/> 
-                    <span>Count of Category</span>
-                  </label></p>
-                  <br />
-                  <p><label>
-                    <input type="radio" name="pie-radio" value="other" id="pie-1"/> 
-                    <span>
-                      <span class="black-magic">
-                        Sum of &nbsp;
-                        <span class="inline-block-field input-field"><select class="select-value"></select></span>
+                  <div class="y-axis">
+                    <p><label>
+                      <input type="radio" name="pie-radio" value="count" id="pie-0" checked/> 
+                      <span>Count of Category</span>
+                    </label></p>
+                    <br />
+                    <p><label>
+                      <input type="radio" name="pie-radio" value="sum" id="pie-1"/> 
+                      <span>
+                        <span class="black-magic">
+                          Sum of &nbsp;
+                          <span class="inline-block-field input-field"><select class="select-value"></select></span>
+                        </span>
                       </span>
-                    </span>
-                  </label></p>
+                    </label></p>
+                  </div>
                 </div>
               </div>
             </div>
