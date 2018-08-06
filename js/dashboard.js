@@ -22,7 +22,7 @@ function signupSuccess() {
       alert("This petition not exist!")
       return;
     }
-    var formLink = "https://docs.google.com/forms/d/" + params['petition'] + "/edit?usp=sharing";
+    var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
     callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
     
   }, function(reason) {
@@ -41,7 +41,10 @@ function initSignatureSummary(inRes) {
 
   if (inRes.length > 0) {
     checkAvailableGraphTypes(); 
-    google.charts.setOnLoadCallback(function() {prepareVizInterface("pie"); drawChart("pie", CATEGORY[0], {"count": true})}); // Show a basic graph initially
+    google.charts.setOnLoadCallback(function() {}); // Show a basic graph initially
+  } else {
+    $(".card").hide();
+    $("#msg-no-available-chart").show();
   }
 
   initListener();
@@ -50,6 +53,21 @@ function initSignatureSummary(inRes) {
 } 
 
 function initListener() {
+  /* Select for scatter */
+
+  $('select.x-axis').on('change', function() {
+    var o = getSelectedOption('scatter');
+    drawChart( 'scatter', o.x, {"field": o.y} );
+  })
+
+  $(document).on('change', '.y-axis input', function() {
+    var o = getSelectedOption('scatter');
+    drawChart( 'scatter', o.x, {"field": o.y} );
+  });
+
+
+  /* End Select for scatter */
+
 
   $('select.select-category').on('change', function() {
     drawChart( $(this).parent()[0].getAttribute('graph-type'), this.value, {"count": true} );
@@ -58,16 +76,43 @@ function initListener() {
   $('select.select-value').on('change', function() {
     drawChart( $(this).parents('div')[0].getAttribute('graph-type'), $($(this).parent()[0]).siblings('.select-category').val(), {"sum": this.value} );
   })
+
+  var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, {
+      'onCloseEnd': () => {
+        removeHighlightFromCards('orange lighten-4');
+      }
+    });
+    addModalClickEventListener('.modal-trigger', function(event, arguments /* Array */){
+      var card = getCardFromClickEvent(event);
+      $(card).addClass('orange lighten-4');
+
+      var modal_header = document.getElementsByClassName('modal-header')[0];
+      var modal_body = document.getElementsByClassName('modal-body')[0];
+      console.log(event);
+      console.log(arguments);
+      /* Add your codes */
+
+      var graph_type = $(card).attr("graph-type");
+      prepareVizInterface( graph_type ); 
+
+      if(graph_type != "scatter")
+        drawChart(graph_type, CATEGORY[0], {"count": true});
+    }, 1, 2, 3 /* Arguments */);
+
+  // document.addEventListener('DOMContentLoaded', function() {
+
+  // });
 }
 
 function checkAvailableGraphTypes() {
   computeCategory();
   var numeric_field_cnt = Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).length - CATEGORY.length;
 
-  $(".option-graph-type").hide();
+  $(".card").hide();
 
-  $(".option-graph-type").each(function(index) {
-    if( $(this).attr("graph-required-numeric") <= numeric_field_cnt ) 
+  $(".card").each(function(index) {
+    if( $(this).find('option-graph-type')['graph-required-numeric'] <= numeric_field_cnt ) 
       $(this).show();
   });
 }
@@ -77,6 +122,25 @@ function computeCategory() {
     if( !isFieldNumeric(key) )
       CATEGORY.push(key);
   }
+}
+
+function countLetter(inElement) {
+    var postLength = detectBrowser() == 'ie' ? inElement.textContent.length : inElement.textLength;
+    var charactersLeft = 140 - postLength;
+    inElement.getElementsByClassName("status-box");
+
+    var counter = inElement.parentElement.parentElement.parentElement.getElementsByClassName("counter")[0];
+    counter.innerHTML = charactersLeft;
+
+    if (charactersLeft < 0) {
+        inElement.parentElement.parentElement.parentElement.getElementsByClassName("comments-post")[0].classList += " disabled";
+        counter.classList += " minus-counter";
+    } else if (charactersLeft == 140) {
+        inElement.parentElement.parentElement.parentElement.getElementsByClassName("comments-post")[0].classList += " disabled";
+    } else {
+        inElement.parentElement.parentElement.parentElement.getElementsByClassName("comments-post")[0].classList.remove("disabled");
+        counter.classList.remove("minus-counter");
+    }
 }
 
 function getFieldVal(inField, inCondition=function(r){ return true;}) {
@@ -116,14 +180,32 @@ function displayGraph(inGraphType, inFieldArray) {
 }
 
 function prepareVizInterface(inGraphType) {
-  $("#{0}-interface select".format(inGraphType)).empty();
+  $(".graph-options").hide();
+  $("#{0}-interface.graph-options".format(inGraphType)).show();
 
-  for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
-    if ( CATEGORY.includes(key) )
-      $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
-    else 
-      $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
+  $("#{0}-interface select".format(inGraphType)).empty();
+  $(".value-select-container").empty();
+
+  if (inGraphType == "scatter") {
+    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+      if ( !CATEGORY.includes(key) ) {
+        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+
+        $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="questions-public" value="{0}"> <span>{1}</span> </label></p>'.format(key, key) );
+      }
+    }
   }
+
+  else if(inGraphType == "pie") {
+    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+      if ( CATEGORY.includes(key) )
+        $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+      else 
+        $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
+    }
+  }
+  
+  initialize_materialize_css();
 }
 
 // inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..], "field": [..]}
@@ -251,10 +333,29 @@ function drawChart(inGraphType, inField, inValueFields) {
   
 
   var options = {
-      title: graphData[0][1]
+      // title: graphData[0][1]
   };
   chart.draw(data, options);
-  initialize_materialize_css();
+}
+
+function getSelectedOption( inGraphType ) {
+  var res = {x: [], y:[]};
+
+  res.x = $("#{0}-interface .x-axis".format(inGraphType)).get(0).value;
+
+  $("#{0}-interface .y-axis".format(inGraphType)).children().each(function(i) { 
+    var tag_name = $(this).prop("tagName").toLowerCase();
+
+    if (tag_name == 'p') {
+      if ( $( this ).find('input')[0].checked ) res.y.push( $( this ).find('input')[0].value );
+    }
+
+    else if(tag_name == 'input') {
+      if( $(this).hasAttr('checked') ) res.y.push( $(this).attr('value') );
+    }
+  });
+
+  return res;
 }
 
 function initialize_materialize_css() {
@@ -274,9 +375,9 @@ function addModalClickEventListener(query, func, ...args) {
 
 function getCardFromClickEvent(event) {
   if (event.target.nodeName == 'IMG') {
-    return event.srcElement.parentElement.parentElement.parentElement;
-  } else if (event.srcElement.nodeName == 'A') {
-    return event.srcElement.parentElement.parentElement;
+    return event.target.parentElement.parentElement.parentElement;
+  } else if (event.target.nodeName == 'A') {
+    return event.target.parentElement.parentElement;
   }
 }
 

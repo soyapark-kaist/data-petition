@@ -43,13 +43,82 @@ function displayEditForm(inRes) {
 } 
 
 function displayQuestions(inRes) {
-  for (var key in inRes) {
-    $("#questions-public-setting").append(
-      '<p><label mv-multiple property=""> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span>{1}</span> </label></p>'.format(inRes[key], inRes[key])
-    );
-  }
+  // for (var key in inRes) {
+  //   $("#questions-public-setting").append(
+  //     '<p><label mv-multiple property=""> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span>{1}</span> </label></p>'.format(inRes[key], inRes[key])
+  //   );
+  // }
+
+  var params = getJsonFromUrl(true);
+  
+  // starCountRef.on('value', function(snapshot) {
+  //   updateStarCount(postElement, snapshot.val());
+  // });
+
+  //var updates = {};
+  // updates["/question"]
+  // questionRef.update();
+
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
+  // petition/[petitionID]
+
+  questionRef.once("value").then(function(snapshot) {
+    var questions = snapshot.val() ? snapshot.val() : [];
+    var data_to_update = {};
+    var onSuccess = function() {};
+
+    console.log(questions);
+    if(!questions.length) onSuccess = function() {location.reload();};
+    // TODO if inRes is not at DB yet, then add. 
+    var questionID = [];
+    for(var key in questions) {
+      questionID.push( questions[key].id );
+    }
+
+    var index = questions.length;
+
+    for (var key in inRes) {
+      if( !questionID.includes(key) )
+        data_to_update[index++] = {"done": true, "title": inRes[key], "id": key};
+    } 
+
+    updateDB("petition/" + params['petition'] + "/question", data_to_update, onSuccess);
+
+  });
   
   showLoader(false);
+}
+
+function updateDB(inRef, inData, inOnSuccess) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+
+  playersRef.update(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              inOnSuccess();
+          }
+
+      });
+}
+
+function setDB(inRef, inData) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+  debugger;
+
+  playersRef.set(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              console.log("push to DB", inData);
+              $("#petition-container").attr("mv-app", inRef);
+          }
+
+      });
 }
 
 function routeToDashboard() {

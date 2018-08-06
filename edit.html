@@ -24,7 +24,18 @@
       </div>
     </nav>
 
-    <div class="section no-pad-bot">
+    <div class="row center" id="msg_request_login">
+          <div id="btn_google_signin" class="btn white darken-4 col s6 offset-s3">
+            <a style="text-transform:none">
+                <div class="left">
+                    <img width="20px" alt="Google &quot;G&quot; Logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"/>
+                </div>
+                Login with Google
+            </a>
+          </div>
+    </div>
+
+    <div class="section no-pad-bot" id="main-area">
       <div class="container">
         <h1 class="header center orange-text">Create your petition</h1>
         <div class="row center">
@@ -35,20 +46,20 @@
           <!-- <input class="authorize-only" id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" /> -->
           <input class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature" type="button" value="Edit signature"
                  onclick="window.open('http://www.website.com/page')" />
-          <button id="btn_add_collaborators" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">Add collaborators</button>
+          <button id="btn_add_collaborators" class="btn waves-effect waves-light grey" onclick="alert('Write your collaborators email here: ')">Add collaborators</button>
           <button id="btn_view_summary" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">View summary</button>
         </div>
 
-        <div class="row" mv-app="petition" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="local">
-        <!-- mv-storage="firebase" mv-server-push mv-autosave -->
+        <div id="petition-container" class="row" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="firebase" mv-server-push mv-autosave>
           <p id="display-link"></p>
 
           <div class="divider"></div>
 
-          <h5 property="petition-title" class="header col s12 light">My petition title</h5>
+          <h5 property="ptitle" class="header col s12 light">My petition title</h5>
 
           <div id="editor">
           </div>
+
 
           <h5 class="header col s12 light">Signature Questions</h5>
           Choose which questions are public or not. Response of public questions will be visible to other users and they can use it for their visualization. Unmark personal information (e.g. name, contact) to make it private.
@@ -60,7 +71,7 @@
                 <span class="card-title">public?</span>
                 <div id="questions-public-setting">
                   <p mv-multiple property="question">
-                    <label> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span property="title"></span> </label>
+                    <label> <input property="done" type="checkbox" name="questions-public" checked="checked"> <span>[title]</span> </label>
                   </p>
                 </div>
               </div>
@@ -84,17 +95,19 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
-
-    <script type="text/javascript" src="js/lib/mavo.js"></script>
-    <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
 
     <script type="text/javascript" src="js/privacy.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
 
     <script type="text/javascript" src="js/edit.js"></script>
+
+    <script type="text/javascript" src="js/lib/mavo.js"></script>
+    <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
     
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
