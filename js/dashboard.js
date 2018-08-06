@@ -42,6 +42,9 @@ function initSignatureSummary(inRes) {
   if (inRes.length > 0) {
     checkAvailableGraphTypes(); 
     google.charts.setOnLoadCallback(function() {}); // Show a basic graph initially
+  } else {
+    $(".card").hide();
+    $("#msg-no-available-chart").show();
   }
 
   initListener();
@@ -106,10 +109,10 @@ function checkAvailableGraphTypes() {
   computeCategory();
   var numeric_field_cnt = Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).length - CATEGORY.length;
 
-  $(".option-graph-type").hide();
+  $(".card").hide();
 
-  $(".option-graph-type").each(function(index) {
-    if( $(this).attr("graph-required-numeric") <= numeric_field_cnt ) 
+  $(".card").each(function(index) {
+    if( $(this).find('option-graph-type')['graph-required-numeric'] <= numeric_field_cnt ) 
       $(this).show();
   });
 }
