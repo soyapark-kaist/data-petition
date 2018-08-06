@@ -45,6 +45,14 @@ function initSignatureSummary(inRes) {
     $("#msg-no-available-chart").show();
   }
 
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
+  // petition/[petitionID]
+
+  questionRef.once("value").then(function(snapshot) {
+    var contents = snapshot.val();
+    setContents(editor, contents);
+  });
+
   initListener();
 
   showLoader(false);

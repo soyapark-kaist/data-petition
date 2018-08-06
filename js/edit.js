@@ -86,7 +86,16 @@ function displayQuestions(inRes) {
 
   });
   
+  initListener();
+
   showLoader(false);
+}
+
+function initListener() {
+  $(document).on('click', '.mv-save', function() {
+    // Save contetns to DB. 
+    setDB("petition/" + params["petition"] + "/contents", getContents(editor));
+  });
 }
 
 function updateDB(inRef, inData, inOnSuccess) {
