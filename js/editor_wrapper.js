@@ -4,6 +4,7 @@ function getContents(editor) {
     /* Returns 'delta' object.
     Refer to https://quilljs.com/docs/delta/ */
     var delta = editor.getContents();
+    debugger;
     return delta;
 }
 
@@ -23,6 +24,13 @@ function insertText(editor, text, start, options) {
     var start = start || 0;
     var options = options || {};
     return editor.insertText(start, text, options);
+}
+
+function setContents(editor, delta) {
+    /* Returns 'delta' object.
+    Refer to https://quilljs.com/docs/delta/ */
+
+    return editor.setContents(delta);;
 }
 
 function setText(editor, text) {
