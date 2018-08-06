@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
-  <body>
+  <body id="petition-container" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="firebase" mv-server-push mv-autosave>
     <nav>
       <div class="nav-wrapper orange darken-3">
         <a href="./" class="brand-logo">Logo</a>
@@ -23,7 +23,7 @@
     
     <div class="section no-pad-bot">
       <div class="container">
-        <h1 class="header center orange-text">Petition Dashboard</h1>
+        <h1 class="header center orange-text">[title]</h1>
         <div class="row center">
           <h5 class="header col s12 light">Let's go CHI! WOW!</h5>
         </div>
@@ -187,12 +187,17 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
 
     <script type="text/javascript" src="js/privacy.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
+
+    <script type="text/javascript" src="js/lib/mavo.js"></script>
+    <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
     
     <script type="text/javascript" src="js/dashboard.js"></script>
 

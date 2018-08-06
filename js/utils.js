@@ -10,3 +10,8 @@ function showLoader(inShow) {
 	if(inShow) $(".loading-container").show();
 	else $(".loading-container").hide();
 }
+
+
+var params = getJsonFromUrl(true);
+p = params['petition'].split("/")[0].split("#")[0];
+$("#petition-container").attr("mv-app", "petition/" + p);
