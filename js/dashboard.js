@@ -50,6 +50,21 @@ function initSignatureSummary(inRes) {
 } 
 
 function initListener() {
+  /* Select for scatter */
+
+  $('select.x-axis').on('change', function() {
+    var o = getSelectedOption('scatter');
+    drawChart( 'scatter', o.x, {"field": o.y} );
+  })
+
+  $(document).on('change', '.y-axis input', function() {
+    var o = getSelectedOption('scatter');
+    drawChart( 'scatter', o.x, {"field": o.y} );
+  });
+
+
+  /* End Select for scatter */
+
 
   $('select.select-category').on('change', function() {
     drawChart( $(this).parent()[0].getAttribute('graph-type'), this.value, {"count": true} );
@@ -162,14 +177,32 @@ function displayGraph(inGraphType, inFieldArray) {
 }
 
 function prepareVizInterface(inGraphType) {
-  $("#{0}-interface select".format(inGraphType)).empty();
+  $(".graph-options").hide();
+  $("#{0}-interface.graph-options".format(inGraphType)).show();
 
-  for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
-    if ( CATEGORY.includes(key) )
-      $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
-    else 
-      $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
+  $("#{0}-interface select".format(inGraphType)).empty();
+  $(".value-select-container").empty();
+
+  if (inGraphType == "scatter") {
+    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+      if ( !CATEGORY.includes(key) ) {
+        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+
+        $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="questions-public" value="{0}"> <span>{1}</span> </label></p>'.format(key, key) );
+      }
+    }
   }
+
+  else if(inGraphType == "pie") {
+    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+      if ( CATEGORY.includes(key) )
+        $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+      else 
+        $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
+    }
+  }
+  
+  initialize_materialize_css();
 }
 
 // inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..], "field": [..]}
@@ -297,10 +330,29 @@ function drawChart(inGraphType, inField, inValueFields) {
   
 
   var options = {
-      title: graphData[0][1]
+      // title: graphData[0][1]
   };
   chart.draw(data, options);
-  initialize_materialize_css();
+}
+
+function getSelectedOption( inGraphType ) {
+  var res = {x: [], y:[]};
+
+  res.x = $("#{0}-interface .x-axis".format(inGraphType)).get(0).value;
+
+  $("#{0}-interface .y-axis".format(inGraphType)).children().each(function(i) { 
+    var tag_name = $(this).prop("tagName").toLowerCase();
+
+    if (tag_name == 'p') {
+      if ( $( this ).find('input')[0].checked ) res.y.push( $( this ).find('input')[0].value );
+    }
+
+    else if(tag_name == 'input') {
+      if( $(this).hasAttr('checked') ) res.y.push( $(this).attr('value') );
+    }
+  });
+
+  return res;
 }
 
 function initialize_materialize_css() {

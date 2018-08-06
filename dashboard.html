@@ -135,7 +135,16 @@
             <div class="card">
               <div class="card-content">
                 <span class="card-title">Option</span>
-                <div id="line-interface" graph-type="line">
+                <div id="scatter-interface" class="graph-options" graph-type="scatter">
+                  <div class="input-field">
+                    <select class="select-category x-axis">
+                    </select>
+                  </div>
+                  <div class="value-select-container y-axis">
+                  </div>
+                </div>
+
+                <div id="line-interface" class="graph-options" graph-type="line">
                   <div class="input-field">
                     <select class="select-category">
                     </select>
@@ -143,7 +152,7 @@
                   <div class="value-select-container"></div>
                 </div>
 
-                <div id="pie-interface" graph-type="pie">
+                <div id="pie-interface" class="graph-options" graph-type="pie">
                   <div class="input-field">
                     <select class="select-category">
                     </select>
