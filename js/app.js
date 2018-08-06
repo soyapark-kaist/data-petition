@@ -157,35 +157,7 @@ function displayRequestLogin(inRes) {
 
 }
 
-function getJsonFromUrl(hashBased) {
-  var query;
-  if(hashBased) {
-    var pos = location.href.indexOf("?");
-    if(pos==-1) return [];
-    query = location.href.substr(pos+1);
-  } else {
-    query = location.search.substr(1);
-  }
-  var result = {};
-  query.split("&").forEach(function(part) {
-    if(!part) return;
-    part = part.split("+").join(" "); // replace every + with space, regexp-free version
-    var eq = part.indexOf("=");
-    var key = eq>-1 ? part.substr(0,eq) : part;
-    var val = eq>-1 ? decodeURIComponent(part.substr(eq+1)) : "";
-    var from = key.indexOf("[");
-    if(from==-1) result[decodeURIComponent(key)] = val;
-    else {
-      var to = key.indexOf("]",from);
-      var index = decodeURIComponent(key.substring(from+1,to));
-      key = decodeURIComponent(key.substring(0,from));
-      if(!result[key]) result[key] = [];
-      if(!index) result[key].push(val);
-      else result[key][index] = val;
-    }
-  });
-  return result;
-}
+
 
 String.prototype.format = function() {
     var formatted = this;
@@ -195,6 +167,6 @@ String.prototype.format = function() {
     return formatted;
 };
 const SUM = arr => arr.reduce((a,b) => a + b, 0);
-const MIN = arr => arr.reduce((min, p) => p < min ? p : min, data[0]);
-const MAX = arr => arr.reduce((max, p) => p > max ? p : max, data[0]);
+const MIN = arr => arr.reduce((min, p) => p < min ? p : min, arr[0]);
+const MAX = arr => arr.reduce((max, p) => p > max ? p : max, arr[0]);
 const AVER = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;

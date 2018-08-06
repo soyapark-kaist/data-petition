@@ -1,9 +1,7 @@
 var SIGNATURE_DATA = [], 
   CATEGORY = [];          // List of a field at the form which is not numeric value. 
 
-var GRAPH_TYPE = [["pie", "network"],
-                  ["bar", "line", "area"],    // Need at least one numeric fields
-                  ["scatter"]] // Need two at least two numeric fields 
+var GRAPH_TYPE = {"scatter": 2, "area": 1, "line": 1, "bar": 1, "pie": 0};
 
 /* Called when succesfully signed in */
 function signupSuccess() {
@@ -47,35 +45,35 @@ function initSignatureSummary(inRes) {
     $("#msg-no-available-chart").show();
   }
 
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
+  // petition/[petitionID]
+
+  questionRef.once("value").then(function(snapshot) {
+    var contents = snapshot.val();
+    setContents(editor, contents);
+  });
+
   initListener();
 
   showLoader(false);
 } 
 
+function prepareDrawChart( inEvent ) {
+  var graph_type = inEvent.parents('.graph-options').attr('graph-type');
+  var o = getSelectedOption( graph_type );
+
+  if ( graph_type == "area" || graph_type == "line" || graph_type == "bar") {
+    $("#{0}-interface .y-axis div".format(graph_type)).first().attr( "value", o.x[0] );
+    $("#{0}-interface .y-axis p".format(graph_type)).first().text( o.x[0] );
+  }
+
+  drawChart( graph_type, o.x[0], o.y );
+}
+
 function initListener() {
-  /* Select for scatter */
-
-  $('select.x-axis').on('change', function() {
-    var o = getSelectedOption('scatter');
-    drawChart( 'scatter', o.x, {"field": o.y} );
-  })
-
-  $(document).on('change', '.y-axis input', function() {
-    var o = getSelectedOption('scatter');
-    drawChart( 'scatter', o.x, {"field": o.y} );
+  $(document).on('change', 'select.x-axis, .y-axis input, .y-axis select', function() {
+    prepareDrawChart( $(this) );
   });
-
-
-  /* End Select for scatter */
-
-
-  $('select.select-category').on('change', function() {
-    drawChart( $(this).parent()[0].getAttribute('graph-type'), this.value, {"count": true} );
-  })
-
-  $('select.select-value').on('change', function() {
-    drawChart( $(this).parents('div')[0].getAttribute('graph-type'), $($(this).parent()[0]).siblings('.select-category').val(), {"sum": this.value} );
-  })
 
   var elems = document.querySelectorAll('.modal');
     var instances = M.Modal.init(elems, {
@@ -96,6 +94,8 @@ function initListener() {
       var graph_type = $(card).attr("graph-type");
       prepareVizInterface( graph_type ); 
 
+      $("#chart-container").empty();
+
       if(graph_type != "scatter")
         drawChart(graph_type, CATEGORY[0], {"count": true});
     }, 1, 2, 3 /* Arguments */);
@@ -109,10 +109,10 @@ function checkAvailableGraphTypes() {
   computeCategory();
   var numeric_field_cnt = Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).length - CATEGORY.length;
 
-  $(".card").hide();
+  $(".modal-select .card").hide();
 
-  $(".card").each(function(index) {
-    if( $(this).find('option-graph-type')['graph-required-numeric'] <= numeric_field_cnt ) 
+  $(".modal-select .card").each(function(index) {
+    if( GRAPH_TYPE[$(this).attr('graph-type')] <= numeric_field_cnt ) 
       $(this).show();
   });
 }
@@ -199,9 +199,34 @@ function prepareVizInterface(inGraphType) {
   else if(inGraphType == "pie") {
     for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
       if ( CATEGORY.includes(key) )
-        $("#{0}-interface .select-category".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
       else 
         $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
+    }
+  }
+
+  else {
+    var $div = $("<div value={0}></div>".format(CATEGORY[0]));
+    $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
+    $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
+
+    $("#{0}-interface .y-axis".format(inGraphType)).append( $div ); 
+    // $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
+
+    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+      if ( CATEGORY.includes(key) ) {
+        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+      }
+      else {
+        $div = $("<div class='y-value-wrapper' value='{0}''></div>".format(key));
+        $div.append( '<p>{0}</p>'.format(key) ); 
+
+        $.each([ 'min', 'max', 'avg', 'sum' ], function( index, value ) {
+          $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format(value, value) );    
+        });    
+        
+        $("#{0}-interface .y-axis".format(inGraphType)).append( $div );
+      }
     }
   }
   
@@ -271,34 +296,41 @@ function drawChart(inGraphType, inField, inValueFields) {
     }
 
     // y-axis
-    if ( "count" in inValueFields ) {
-      var arr = getFieldVal(inField);
-      var counts = {};
+    for(var key in inValueFields) {
+      if (key == "count") {
+        var arr = getFieldVal(inField);
+        var counts = {};
 
-      for (var i = 0; i < arr.length; i++) {
-        var val = arr[i];
-        counts[val] = counts[val] ? counts[val] + 1 : 1;
-      }
+        for (var i = 0; i < arr.length; i++) {
+          var val = arr[i];
+          counts[val] = counts[val] ? counts[val] + 1 : 1;
+        }
 
-      graphData[0].push( "Count of " + inField );
-      for (var i = 1; i < graphData.length; i++) {
-        graphData[i].push( graphData[i][0] in counts ? counts[graphData[i][0]] : 0 );
-      }
-    } 
+        graphData[0].push( "Count of " + inField );
+        for (var i = 1; i < graphData.length; i++) {
+          graphData[i].push( graphData[i][0] in counts ? counts[graphData[i][0]] : 0 );
+        }
+      } else {
+        var category_vals = new Set(getFieldVal(inField));
+        for (var i = 0; i < inValueFields[key].length; i++) {
+          
+          var arr = {};
 
-    if ( "sum" in inValueFields ) { // sum of other field
-      var category_vals = new Set(getFieldVal(inField));
-      for (var i = 0; i < inValueFields["sum"].length; i++) {
-        
-        var sum = {};
+          category_vals.forEach(function(v) {
+            if( key == "sum")
+              arr[v] = SUM( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+            else if( key == "min")
+              arr[v] = MIN( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+            else if( key == "max")
+              arr[v] = MAX( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+            else if( key == "avg")
+              arr[v] = AVER( getFieldVal(inValueFields[key][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
+          });
 
-        category_vals.forEach(function(v) {
-          sum[v] = SUM( getFieldVal(inValueFields['sum'][i], function(d) { if(d[inField] == v) return true; return false; }).map(x => (parseFloat(x))) );
-        });
-
-        graphData[0].push( "Sum of " + inValueFields["sum"][i] );
-        for (var j = 1; j < graphData.length; j++) {
-          graphData[j].push( graphData[j][0] in sum ? sum[graphData[j][0]] : 0 );
+          graphData[0].push( key + " of " + inValueFields[key][i] );
+          for (var j = 1; j < graphData.length; j++) {
+            graphData[j].push( graphData[j][0] in arr ? arr[graphData[j][0]] : 0 );
+          }
         }
       }
     }
@@ -339,20 +371,34 @@ function drawChart(inGraphType, inField, inValueFields) {
 }
 
 function getSelectedOption( inGraphType ) {
-  var res = {x: [], y:[]};
+  var res = {'x': [], 'y':{}};
 
-  res.x = $("#{0}-interface .x-axis".format(inGraphType)).get(0).value;
+  res.x.push($("#{0}-interface .x-axis".format(inGraphType))[0].value);
 
-  $("#{0}-interface .y-axis".format(inGraphType)).children().each(function(i) { 
-    var tag_name = $(this).prop("tagName").toLowerCase();
+  $("#{0}-interface .y-axis".format(inGraphType))
 
-    if (tag_name == 'p') {
-      if ( $( this ).find('input')[0].checked ) res.y.push( $( this ).find('input')[0].value );
+  $("#{0}-interface .y-axis input:checked".format(inGraphType)).each(function(i) { 
+    var v = $(this).attr('value');
+
+    if (v == "count") {
+      for (var i = 0; i < res.x.length ; i++) {
+        'count' in res['y'] ? res['y']['count'].push(res.x[i]) : res['y'] = {"count": [res.x[i]]};
+      }
+    } else if ( ["min", "max", "sum", "avg"].includes(v) ) { 
+      if( inGraphType == "pie") {
+        var s = $($(this).parent()[0]).find('.select-dropdown').get(0).value;
+        v in res['y'] ? res['y'][v].push(s) : res['y'][v] = [s];
+      }
+      else {
+        var s = $(this).parents(".y-value-wrapper")[0].getAttribute('value');
+        v in res['y'] ? res['y'][v].push(s) : res['y'][v] = [s];
+      }
+      
+    } else {
+      if ( inGraphType == "scatter" )
+        'field' in res['y'] ? res['y']['field'].push(v) : res['y']['field'] = [v];
     }
 
-    else if(tag_name == 'input') {
-      if( $(this).hasAttr('checked') ) res.y.push( $(this).attr('value') );
-    }
   });
 
   return res;
