@@ -26,7 +26,7 @@ function displayEditForm(inRes) {
   var formEditLink = inRes["editLink"],
       publishLink = inRes["publishLink"];
 
-  $("#display-link").html("Your petition edit link (don't share this link with unauthorized): <a href={0}>{1}</a>".format(formEditLink, formEditLink));
+  // $("#display-link").html("Your petition edit link (don't share this link with unauthorized): <a href={0}>{1}</a>".format(formEditLink, formEditLink));
   //TODO: refresh with the focus / update the iframe  
                         // 'https://docs.google.com/forms/d/1UMGwXJ285CeUG98eME7sm1aYHBiWNUHsmhps253pPg0/edit'
                         // https://docs.google.com/forms/d/e/1FAIpQLScXsDe_D-q0wv401_x6RhaJzBo6H1o262khETRsQsullplAzw/viewform?usp=sf_link
@@ -85,6 +85,8 @@ function displayQuestions(inRes) {
     updateDB("petition/" + params['petition'] + "/question", data_to_update, onSuccess);
 
   });
+
+  $(".authorize-only").show();
   
   initListener();
 
