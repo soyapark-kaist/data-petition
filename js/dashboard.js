@@ -31,7 +31,15 @@ function signupSuccess() {
 function initSignatureSummary(inRes) {
   console.log(inRes);
 
-  $("#participants-number").text(inRes.length);
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
+  // petition/[petitionID]
+
+  questionRef.once("value").then(function(snapshot) {
+    var goal = parseInt(snapshot.val()) ? parseInt(snapshot.val()) : 100;
+  
+    $("#participants-number").text(inRes.length);
+    $(".progress .determinate").css("width", (inRes.length / goal * 100) + "%");
+  });
 
   SIGNATURE_DATA = inRes;
 

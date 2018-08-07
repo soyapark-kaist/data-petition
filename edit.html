@@ -44,10 +44,8 @@
         <div class="row center">
           
           <!-- <input class="authorize-only" id="input_edit_signature" type="button" value="Edit signature" onclick="window.open('http://www.website.com/page')" /> -->
-          <input class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature" type="button" value="Edit signature"
-                 onclick="window.open('http://www.website.com/page')" />
           <button id="btn_add_collaborators" class="btn waves-effect waves-light grey" onclick="alert('Write your collaborators email here: ')">Add collaborators</button>
-          <button id="btn_view_summary" class="btn waves-effect waves-light grey" onclick="routeToDashboard()">Preview</button>
+          <button id="btn_view_summary" data-position="top" data-tooltip="You can keep editing the petition" class="btn waves-effect waves-light orange tooltipped" onclick="routeToDashboard()">Publish</button>
         </div>
 
         <div id="petition-container" class="row" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="firebase" mv-server-push mv-autosave>
@@ -60,9 +58,21 @@
           <div id="editor">
           </div>
 
-
-          <h5 class="header col s12 light">Signature Questions</h5>
-          Choose which questions are public or not. Response of public questions will be visible to other users and they can use it for their visualization. Unmark personal information (e.g. name, contact) to make it private.
+          <h5 class="header col s12 light">Signature Goal</h5>
+          Set the goal for the number of signatures on your petition! 
+          <br/>
+          <div class="right-align col m6 offset-m3 s12">
+            <span><div property="goal">100</div> signatures required until victory!</span>
+            <div class="progress">
+              <div class="determinate" style="width: 70%"></div>
+            </div>
+          </div>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <h5 class="header col s12 light">Privacy setting</h5>
+          Choose which data at signatures are public or not. Response of public questions will be visible to other users and they can use it for their visualization. Unmark personal information (e.g. name, contact) to make it private.
 
 
           <div class="left-align col m6 offset-m3 s12">
@@ -83,6 +93,8 @@
 
         <div class="row center">
           <h5 class="header col s12 light">Signature Preview</h5>
+          <input class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature" type="button" value="Edit signature"
+                 onclick="window.open('http://www.website.com/page')" />
           <div style="width:800px;height:800px;" id="signature-container"></div>
         </div>
       </div>
@@ -138,8 +150,13 @@
       addEditingStopEventListener(() => {
         console.log('Wow This is the test callback.')
 
-        
+
       }) 
+
+      // Tooltip init
+      $(document).ready(function(){
+        $('.tooltipped').tooltip();
+      });
     </script>
 
   </body>
