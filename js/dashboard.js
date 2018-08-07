@@ -31,21 +31,22 @@ function signupSuccess() {
 function initSignatureSummary(inRes) {
   console.log(inRes);
 
+  SIGNATURE_DATA = inRes.signature;
+  $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
+
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
   // petition/[petitionID]
 
   questionRef.once("value").then(function(snapshot) {
     var goal = parseInt(snapshot.val()) ? parseInt(snapshot.val()) : 100;
   
-    $("#participants-number").text(inRes.length);
-    $(".progress .determinate").css("width", (inRes.length / goal * 100) + "%");
+    $("#participants-number").text(SIGNATURE_DATA.length);
+    $(".progress .determinate").css("width", (SIGNATURE_DATA.length / goal * 100) + "%");
   });
-
-  SIGNATURE_DATA = inRes;
 
   google.charts.load('current', {'packages':['corechart']});
 
-  if (inRes.length > 0) {
+  if (SIGNATURE_DATA.length > 0) {
     checkAvailableGraphTypes(); 
     google.charts.setOnLoadCallback(function() {}); // Show a basic graph initially
   } else {
