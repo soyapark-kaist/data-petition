@@ -53,11 +53,11 @@ function updateSigninStatus(isSignedIn) {
 
     $("#main-area").show();
 
-    authorizeButton.style.display = 'none';
-    signoutButton.style.display = 'block';
+    
 
     signupSuccess();
   } else {
+    debugger;
     $("#content").hide();
 
     $("#msg_request_login").show();
@@ -81,7 +81,8 @@ function handleAuthClick(event) {
  */
 function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
-  window.location.href = '/';
+  location.reload();
+  // window.location.href = './';
 }
 
 /**
