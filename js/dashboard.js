@@ -3,6 +3,10 @@ var SIGNATURE_DATA = [],
 
 var GRAPH_TYPE = {"scatter": 2, "area": 1, "line": 1, "bar": 1, "pie": 0};
 
+$( document ).ready(function() {
+  initPetition();
+});
+
 /* Called when succesfully signed in */
 function signupSuccess() {
   // Make an API call to the People API, and print the user's given name.
@@ -11,11 +15,7 @@ function signupSuccess() {
     'requestMask.includeField': 'person.names,person.emailAddresses'
   }).then(function(response) {
     appendPre("Hi, " + response.result.names[0].givenName);
-
-    authorizeButton.style.display = 'none';
-    signoutButton.style.display = 'block';
-    
-    initPetition();
+ 
     $(".authorize-only").show();
 
   }, function(reason) {
@@ -30,13 +30,12 @@ function initPetition() {
     return;
   }
   var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
-  callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
+  // callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
 
-  showLoader(false);
-}
-    
-    showPetitionContent();
-function showPetitionContent() {
+  var p = {'func': 'getSignatures', 'pid': params['petition'], 'callback': 'initSignatureSummary'};
+  get(p);
+
+  /* load petition content */ 
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
   // petition/[petitionID]
 
@@ -44,14 +43,17 @@ function showPetitionContent() {
     var contents = snapshot.val();
     setContents(editor, contents);
   });
-}
 
+  showLoader(false);
+}
+    
 function initSignatureSummary(inRes) {
   console.log(inRes);
 
   SIGNATURE_DATA = inRes.signature;
   $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
 
+  var params = getJsonFromUrl(true);
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
   // petition/[petitionID]
 

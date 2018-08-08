@@ -53,7 +53,8 @@ function updateSigninStatus(isSignedIn) {
 
     $("#main-area").show();
 
-    
+    authorizeButton.style.display = 'none';
+    signoutButton.style.display = 'block';
 
     signupSuccess();
   } else {

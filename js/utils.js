@@ -46,6 +46,25 @@ function showLoader(inShow) {
 }
 
 
-var params = getJsonFromUrl(true);
-p = params['petition'].split("/")[0].split("#")[0];
-$("#petition-container").attr("mv-app", "petition/" + p);
+function buildApiUrl (params) {
+	var url = API_BASE, cnt = 0;
+
+	for (var key in params) {
+		if (cnt++ == 0) url += ("?{0}={1}".format(key, params[key]) );
+		else url += ("&{0}={1}".format(key, params[key]) );
+	} 
+	return url;
+}
+
+function get(params) {
+	$.ajax({
+	    type:"GET",
+	    url: buildApiUrl(params),
+	    success: function(data) {
+	      $('.text').text(JSON.stringify(data));
+	    },
+	    dataType: 'jsonp',
+	  });
+} 
+
+$("#petition-container").attr("mv-app", "petition/" + getJsonFromUrl(true)['petition']);
