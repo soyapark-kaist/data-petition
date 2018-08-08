@@ -5,9 +5,6 @@ var GRAPH_TYPE = {"scatter": 2, "area": 1, "line": 1, "bar": 1, "pie": 0};
 
 /* Called when succesfully signed in */
 function signupSuccess() {
-  showLoader(true);
-  
-
   // Make an API call to the People API, and print the user's given name.
   gapi.client.people.people.get({
     'resourceName': 'people/me',
@@ -15,16 +12,37 @@ function signupSuccess() {
   }).then(function(response) {
     appendPre("Hi, " + response.result.names[0].givenName);
 
-    var params = getJsonFromUrl(true);
-    if( !params['petition'] ) {
-      alert("This petition not exist!")
-      return;
-    }
-    var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
-    callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
+    authorizeButton.style.display = 'none';
+    signoutButton.style.display = 'block';
     
+    initPetition();
+    $(".authorize-only").show();
+
   }, function(reason) {
     console.log('Error: ' + reason.result.error.message);
+  });
+}
+
+function initPetition() {
+  var params = getJsonFromUrl(true);
+  if( !params['petition'] ) {
+    alert("This petition not exist!")
+    return;
+  }
+  var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
+  callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
+
+  showLoader(false);
+}
+    
+    showPetitionContent();
+function showPetitionContent() {
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
+  // petition/[petitionID]
+
+  questionRef.once("value").then(function(snapshot) {
+    var contents = snapshot.val();
+    setContents(editor, contents);
   });
 }
 
@@ -54,13 +72,7 @@ function initSignatureSummary(inRes) {
     $("#msg-no-available-chart").show();
   }
 
-  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
-  // petition/[petitionID]
-
-  questionRef.once("value").then(function(snapshot) {
-    var contents = snapshot.val();
-    setContents(editor, contents);
-  });
+  
 
   initListener();
 

@@ -17,7 +17,7 @@
         <ul id="nav-mobile" class="right">
           <li id="content"></li>
           <!--Add buttons to initiate auth sequence and sign out-->
-          <li><a id="authorize_button" style="display: none;">Log in with Google account</a></li>
+          <li><a id="authorize_button">Log in with Google account</a></li>
           <li><a id="signout_button" style="display: none;">Sign Out</a></li>
         </ul>
       </div>
@@ -33,11 +33,13 @@
           <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Sign this petition"
                  onclick="window.open('http://www.website.com/page')">Sign this petition</button>
           <!-- <button id="edit_signature">edit signature</button> -->
-          <h2 id="participants-number"></h2>
-          <h5>of partipants have submitted data signature!</h5>
-          <div class="col m6 offset-m3 s12">
-            <div class="progress">
-              <div class="determinate" style="width: 70%"></div>
+          <div class="authorize-only">
+            <h2 id="participants-number"></h2>
+            <h5>of partipants have submitted data signature!</h5>
+            <div class="col m6 offset-m3 s12">
+              <div class="progress">
+                <div class="determinate" style="width: 70%"></div>
+              </div>
             </div>
           </div>
 
@@ -228,18 +230,21 @@
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
 
-    <script type="text/javascript" src="js/privacy.js"></script>
+    <script type="text/javascript" src="js/privacy.js"></script>    
     <script type="text/javascript" src="js/app.js"></script>
+
     <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/dashboard.js"></script>
+    
 
     <script type="text/javascript" src="js/lib/mavo.js"></script>
     <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
     
-    <script type="text/javascript" src="js/dashboard.js"></script>
+    
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script async defer src="https://apis.google.com/js/api.js"
-      onload="this.onload=function(){};handleClientLoad()"
+      onload="this.onload=function(){}; handleClientLoad();"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
 
