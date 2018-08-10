@@ -74,23 +74,74 @@ function initSignatureSummary(inRes) {
     $("#msg-no-available-chart").show();
   }
 
-  
+  var a = [];
+  Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
+    if ( ! CATEGORY.includes(key) )
+      a.push( key );
+  });
+
+  prepareVizInterface("line");
+  // updateChartData( formatData(CATEGORY[0], a) );
 
   initListener();
 
   showLoader(false);
 } 
 
+function convertData( inArray ) {
+  var s = "";
+  for (var i = 0; i < inArray.length; i++) {
+    for (var j = 0 ; j < inArray[i].length; j++) {
+      s += (inArray[i][j] + (j == inArray[i].length -1?" \n" : " \t"));
+    }
+  }
+
+  return s;
+} 
+
+function formatData( inXFieldName, inYFiledNames ) {
+  var s = inXFieldName + " \t";
+
+  for(var i = 0 ;i < inYFiledNames.length; i++) {
+    s += (inYFiledNames[i] + (i == inYFiledNames.length -1?" \n" : " \t"));
+  }
+
+  for( var i = 0; i < SIGNATURE_DATA.length; i++ ) {
+    var tmp_s = "";
+    var emptyVal = false;
+
+    //TODO how to handle empty val
+    for(var j = 0 ;j < inYFiledNames.length; j++) {
+      if (inYFiledNames[j] in SIGNATURE_DATA[i])
+        tmp_s += (SIGNATURE_DATA[i][inYFiledNames[j]] + (j == inYFiledNames.length -1?" \n" : " \t"));
+      else {
+        emptyVal = true;
+        break;
+      }
+    }
+
+    if (!emptyVal && inXFieldName in SIGNATURE_DATA[i]) {
+      s += (SIGNATURE_DATA[i][inXFieldName] + " \t");
+      s += tmp_s;
+    }
+  }
+
+  return s;
+}
+
 function prepareDrawChart( inEvent ) {
   var graph_type = inEvent.parents('.graph-options').attr('graph-type');
+  graph_type = "line";
   var o = getSelectedOption( graph_type );
 
   if ( graph_type == "area" || graph_type == "line" || graph_type == "bar") {
-    $("#{0}-interface .y-axis div".format(graph_type)).first().attr( "value", o.x[0] );
-    $("#{0}-interface .y-axis p".format(graph_type)).first().text( o.x[0] );
+    $("#axis-select-container .y-axis div").first().attr( "value", o.x[0] );
+    $("#axis-select-container .y-axis p").first().text( o.x[0] );
   }
 
-  drawChart( graph_type, o.x[0], o.y );
+  updateChartData( formatData(o.x[0], o.y) );
+
+  drawChart( "line", o.x[0], o.y );
 }
 
 function initListener() {
@@ -181,7 +232,7 @@ function getFieldVal(inField, inCondition=function(r){ return true;}) {
 function isFieldNumeric(inField) {
   var arr = getFieldVal(inField);
 
-  return !(arr.map(x => (parseFloat(x))).includes(NaN));
+  return !(arr.map(x => (isNaN(x))).includes(true));
 }
 
 
@@ -233,12 +284,12 @@ function prepareVizInterface(inGraphType) {
     $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
     $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
-    $("#{0}-interface .y-axis".format(inGraphType)).append( $div ); 
+    $("#axis-select-container .y-axis".format(inGraphType)).append( $div ); 
     // $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
     for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
       if ( CATEGORY.includes(key) ) {
-        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+        $("#axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
       }
       else {
         $div = $("<div class='y-value-wrapper' value='{0}''></div>".format(key));
@@ -248,7 +299,7 @@ function prepareVizInterface(inGraphType) {
           $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format(value, value) );    
         });    
         
-        $("#{0}-interface .y-axis".format(inGraphType)).append( $div );
+        $("#axis-select-container .y-axis".format(inGraphType)).append( $div );
       }
     }
   }
@@ -404,17 +455,18 @@ function drawChart(inGraphType, inField, inValueFields) {
   var options = {
       // title: graphData[0][1]
   };
-  chart.draw(data, options);
+
+  updateChartData( convertData(graphData) );
+  // chart.draw(data, options);
 }
 
 function getSelectedOption( inGraphType ) {
   var res = {'x': [], 'y':{}};
 
-  res.x.push($("#{0}-interface .x-axis".format(inGraphType))[0].value);
+  res.x.push($("#axis-select-container .x-axis")[0].value);
 
-  $("#{0}-interface .y-axis".format(inGraphType))
 
-  $("#{0}-interface .y-axis input:checked".format(inGraphType)).each(function(i) { 
+  $("#axis-select-container .y-axis input:checked").each(function(i) { 
     var v = $(this).attr('value');
 
     if (v == "count") {
