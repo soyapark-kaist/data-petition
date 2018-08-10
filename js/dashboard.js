@@ -51,6 +51,7 @@ function initSignatureSummary(inRes) {
   console.log(inRes);
 
   SIGNATURE_DATA = inRes.signature;
+
   $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
 
   var params = getJsonFromUrl(true);
@@ -74,6 +75,7 @@ function initSignatureSummary(inRes) {
     $("#msg-no-available-chart").show();
   }
 
+  initFilter(SIGNATURE_DATA);
   var a = [];
   Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
     if ( ! CATEGORY.includes(key) )
