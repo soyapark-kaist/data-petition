@@ -256,6 +256,20 @@ function prepareVizInterface(inGraphType) {
   initialize_materialize_css();
 }
 
+function updateChartData(inData) {
+  document.querySelector(".chartbuilder-main textarea").value = inData
+
+  document.addEventListener("click", function(e) {
+    console.log("update chart data"); // Prints "Example of an event"
+  });
+  var event = new CustomEvent("click", { "detail": "Example of an event" });
+  var elem = $(".cb-button.button-group-button")[3];
+
+  elem.dispatchEvent(event); 
+
+  $(elem).trigger("click");
+}
+
 // inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..], "field": [..]}
 function drawChart(inGraphType, inField, inValueFields) {
   var chart;
