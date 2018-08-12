@@ -12,6 +12,16 @@
     <link rel="stylesheet" type="text/css" href="css/loader.css"/>
   </head>
   <body>
+    <div id="loading-wall">
+      <h5 class="orange-text" style="margin-top: 100px;">Loading</h5>
+      <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-yellow-only">
+          <div class="circle-clipper left"><div class="circle"></div></div>
+          <div class="gap-patch"><div class="circle"></div></div>
+          <div class="circle-clipper right"><div class="circle"></div></div>
+        </div>
+      </div>
+    </div>
     <nav>
       <div class="nav-wrapper orange darken-3">
         <a href="./" class="brand-logo">Logo</a>
@@ -149,8 +159,6 @@
       console.log(getText(editor));
       addEditingStopEventListener(() => {
         console.log('Wow This is the test callback.')
-
-
       }) 
 
       // Tooltip init
@@ -158,6 +166,7 @@
         $('.tooltipped').tooltip();
       });
     </script>
+    <script type="text/javascript" src="js/loading.js"></script>
 
   </body>
 </html>

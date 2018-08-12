@@ -11,6 +11,16 @@
     <link href="css/dashboard.css" rel="stylesheet">
   </head>
   <body id="petition-container" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="firebase" mv-server-push mv-autosave>
+    <div id="loading-wall">
+      <h5 class="orange-text" style="margin-top: 100px;">Loading</h5>
+      <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-yellow-only">
+          <div class="circle-clipper left"><div class="circle"></div></div>
+          <div class="gap-patch"><div class="circle"></div></div>
+          <div class="circle-clipper right"><div class="circle"></div></div>
+        </div>
+      </div>
+    </div>
     <nav>
       <div class="nav-wrapper orange darken-3">
         <a href="./" class="brand-logo">Logo</a>
@@ -270,6 +280,7 @@
       }) 
       $(".ql-toolbar").hide();
     </script>
+    <script type="text/javascript" src="js/loading.js"></script>
 
   </body>
 </html>
