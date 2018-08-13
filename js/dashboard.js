@@ -55,26 +55,35 @@ function initSignatureSummary(inRes) {
 
   /* Set signature btn. */ 
   // if this petition requires geolocation, send it to prefilled location.
-
-  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
+  var geoRef = firebase.database().ref("petition/" + params['petition'] + "/geolocation");
   // petition/[petitionID]
 
-  questionRef.once("value").then(function(snapshot) {
-    var questions = snapshot.val();
-    for(var key in questions) {
-      // TODO detect location
-    }
+  geoRef.once("value").then(function(snapshot) {
+    var geo = snapshot.val();
 
-    // ?entry.1040949360=*%7CFNAME%7C*&entry.271521054=*%7CLNAME%7C*
-    $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
-    // TODO if require geo-location show marker next to the button
+    if(geo['collect']) {
+      // signature submit btn clicked -> geo location detect -> prefilled url generate -> open the url
+      var generatePrefilledUrl = 'function(inRes) { var p = {"func": "getPrefilledUrls", "pid": "{0}", "qid": "{1}", "loc": inRes.lat+"+"+inRes.lng, "callback": "openResponse"};debugger; get(p); }'.format(params['petition'], geo['id']);
+      $("#btn_sign_petition").attr("onclick", "showLoader(true); detectLocation({0});".format(generatePrefilledUrl));
+      // ?entry.1040949360=*%7CFNAME%7C*&entry.271521054=*%7CLNAME%7C*
+      
+
+      // if require geo-location show marker next to the button
+      $("#icon-location-marker").show();
+    }
+    
+    else {
+      $("#icon-location-marker").hide();
+      $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
+    }
+    
   });
 
 
   /* Set progress bar. */ 
   var goalRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
   // petition/[petitionID]
-
+  //location_searching
   goalRef.once("value").then(function(snapshot) {
     var goal = parseInt(snapshot.val()) ? parseInt(snapshot.val()) : 100;
   
@@ -107,6 +116,33 @@ function initSignatureSummary(inRes) {
 
   showLoader(false);
 } 
+
+function detectLocation(inOnSuccess) {
+  if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+          center = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+          };  
+          console.log(center)
+
+          showLoader(false);
+          inOnSuccess(center);
+      },
+      function() { //error callback
+          console.log("Error geolocation");
+      }, {
+          timeout: 10000
+      });
+  } else {
+      // Browser doesn't support Geolocation
+      console.log("Error geolocation; brower doesn't support");
+  }
+}
+
+function openResponse(inRes) {
+  window.open( inRes['preFilledUrl'] );
+}
 
 function convertData( inArray ) {
   var s = "";

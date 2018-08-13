@@ -126,7 +126,7 @@ function updateDB(inRef, inData, inOnSuccess) {
       });
 }
 
-function setDB(inRef, inData, inOnSuccess) {
+function setDB(inRef, inData, inOnSuccess=function() {}) {
   var playersRef = firebase.database().ref(inRef);
   // users/2017-3-6
 
