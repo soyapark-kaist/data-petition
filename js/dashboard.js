@@ -51,14 +51,31 @@ function initSignatureSummary(inRes) {
   console.log(inRes);
 
   SIGNATURE_DATA = inRes.signature;
-
-  $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
-
   var params = getJsonFromUrl(true);
-  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
+
+  /* Set signature btn. */ 
+  // if this petition requires geolocation, send it to prefilled location.
+
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
   // petition/[petitionID]
 
   questionRef.once("value").then(function(snapshot) {
+    var questions = snapshot.val();
+    for(var key in questions) {
+      // TODO detect location
+    }
+
+    // ?entry.1040949360=*%7CFNAME%7C*&entry.271521054=*%7CLNAME%7C*
+    $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
+    // TODO if require geo-location show marker next to the button
+  });
+
+
+  /* Set progress bar. */ 
+  var goalRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
+  // petition/[petitionID]
+
+  goalRef.once("value").then(function(snapshot) {
     var goal = parseInt(snapshot.val()) ? parseInt(snapshot.val()) : 100;
   
     $("#participants-number").text(SIGNATURE_DATA.length);
