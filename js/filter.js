@@ -1,3 +1,18 @@
+var dimensions = {};
+var nestByDate;
+var numeric_field = [];
+
+window.currentData = function() {
+    if(! nestByDate) return SIGNATURE_DATA;
+    var flightsByDate = nestByDate.entries(dimensions[numeric_field[0]].dimension.top(40));
+    var data_flight = [];
+    for (var i = 0; i < flightsByDate.length; i++) {
+      data_flight.push( flightsByDate[i].values[0] );
+    }
+
+    return data_flight;
+  }
+
 function initFilter(inData) {
   flights = inData;
 
@@ -7,17 +22,14 @@ function initFilter(inData) {
       formatDate = d3.time.format("%B %d, %Y"),
       formatTime = d3.time.format("%I:%M %p");
 
-  
-
-  var numeric_field = [];
   Object.keys( inData[inData.length - 1] ).forEach(function(key) {
     if ( ! CATEGORY.includes(key) )
       numeric_field.push( key );
   });
 
   // A nest operator, for grouping the flight list.
-  var nestByDate = d3.nest()
-      .key(function(d) { debugger; return d[CATEGORY[0]]; });
+  nestByDate = d3.nest()
+      .key(function(d) { return d[CATEGORY[0]]; });
 
   // A little coercion, since the CSV is untyped.
   flights.forEach(function(d, i) {
@@ -45,7 +57,7 @@ function initFilter(inData) {
       distances = distance.group(function(d) { return Math.floor(d / 50) * 50; });
       */
 
-  var dimensions = {};
+  
   for (var i = 0; i < numeric_field.length; i++ ) {
     console.log(numeric_field[i]);
     var dim = flight.dimension(function(d) { return Math.min(199, d[numeric_field[i]]); });
@@ -145,8 +157,10 @@ function initFilter(inData) {
   };
 
   function flightList(div) {
-    debugger;
     var flightsByDate = nestByDate.entries(dimensions[numeric_field[0]].dimension.top(40));
+
+    var current_option = getSelectedOption("line");
+    drawChart( "line", current_option.x[0], current_option.y, window.currentData() );
 
     div.each(function() {
       var date = d3.select(this).selectAll(".date")
@@ -166,9 +180,13 @@ function initFilter(inData) {
       var flightEnter = flight.enter().append("div")
           .attr("class", "flight");
 
-      flightEnter.append("div")
-          .attr("class", "time")
-          .text(function(d) { return d[numeric_field[0]]; });
+
+      for( var key in SIGNATURE_DATA[SIGNATURE_DATA.length -1]) {
+        flightEnter.append("div")
+          .attr("class", key)
+          .text(function(d) { return d[key]; });
+      }
+      
 
       // flightEnter.append("div")
       //     .attr("class", "origin")

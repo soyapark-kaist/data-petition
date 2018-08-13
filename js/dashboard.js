@@ -69,13 +69,14 @@ function initSignatureSummary(inRes) {
 
   if (SIGNATURE_DATA.length > 0) {
     checkAvailableGraphTypes(); 
-    google.charts.setOnLoadCallback(function() {}); // Show a basic graph initially
+    google.charts.setOnLoadCallback(function() {
+      initFilter(SIGNATURE_DATA);
+    }); // Show a basic graph initially
   } else {
     $(".card").hide();
     $("#msg-no-available-chart").show();
   }
 
-  initFilter(SIGNATURE_DATA);
   var a = [];
   Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
     if ( ! CATEGORY.includes(key) )
@@ -101,29 +102,30 @@ function convertData( inArray ) {
   return s;
 } 
 
-function formatData( inXFieldName, inYFiledNames ) {
+function formatData( inXFieldName, inYFiledNames, data_array ) {
   var s = inXFieldName + " \t";
+  data_array = data_array? data_array: SIGNATURE_DATA;
 
   for(var i = 0 ;i < inYFiledNames.length; i++) {
     s += (inYFiledNames[i] + (i == inYFiledNames.length -1?" \n" : " \t"));
   }
 
-  for( var i = 0; i < SIGNATURE_DATA.length; i++ ) {
+  for( var i = 0; i < data_array.length; i++ ) {
     var tmp_s = "";
     var emptyVal = false;
 
     //TODO how to handle empty val
     for(var j = 0 ;j < inYFiledNames.length; j++) {
-      if (inYFiledNames[j] in SIGNATURE_DATA[i])
-        tmp_s += (SIGNATURE_DATA[i][inYFiledNames[j]] + (j == inYFiledNames.length -1?" \n" : " \t"));
+      if (inYFiledNames[j] in data_array[i])
+        tmp_s += (data_array[i][inYFiledNames[j]] + (j == inYFiledNames.length -1?" \n" : " \t"));
       else {
         emptyVal = true;
         break;
       }
     }
 
-    if (!emptyVal && inXFieldName in SIGNATURE_DATA[i]) {
-      s += (SIGNATURE_DATA[i][inXFieldName] + " \t");
+    if (!emptyVal && inXFieldName in data_array[i]) {
+      s += (data_array[i][inXFieldName] + " \t");
       s += tmp_s;
     }
   }
@@ -131,6 +133,8 @@ function formatData( inXFieldName, inYFiledNames ) {
   return s;
 }
 
+
+/* Triggered when x-axis and y-axis changed */
 function prepareDrawChart( inEvent ) {
   var graph_type = inEvent.parents('.graph-options').attr('graph-type');
   graph_type = "line";
@@ -141,7 +145,7 @@ function prepareDrawChart( inEvent ) {
     $("#axis-select-container .y-axis p").first().text( o.x[0] );
   }
 
-  updateChartData( formatData(o.x[0], o.y) );
+  updateChartData( formatData(o.x[0], o.y, window.currentData()) );
 
   drawChart( "line", o.x[0], o.y );
 }
@@ -220,12 +224,14 @@ function countLetter(inElement) {
 }
 
 function getFieldVal(inField, inCondition=function(r){ return true;}) {
-  var arr = []
-  for(var i = 0; i < SIGNATURE_DATA.length; i++) {
-    if( !(inField in SIGNATURE_DATA[i]) ) continue;
-    if( !inCondition(SIGNATURE_DATA[i]) ) continue;
+  var arr = [];
+  var data_array = window.currentData();
 
-    arr.push(SIGNATURE_DATA[i][inField]);
+  for(var i = 0; i < data_array.length; i++) {
+    if( !(inField in data_array[i]) ) continue;
+    if( !inCondition(data_array[i]) ) continue;
+
+    arr.push(data_array[i][inField]);
   }
   
   return arr;
@@ -310,6 +316,9 @@ function prepareVizInterface(inGraphType) {
 }
 
 function updateChartData(inData) {
+  /* filter data */
+
+
   document.querySelector(".chartbuilder-main textarea").value = inData
 
   document.addEventListener("click", function(e) {
