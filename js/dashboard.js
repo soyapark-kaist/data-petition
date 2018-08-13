@@ -3,6 +3,10 @@ var SIGNATURE_DATA = [],
 
 var GRAPH_TYPE = {"scatter": 2, "area": 1, "line": 1, "bar": 1, "pie": 0};
 
+$( document ).ready(function() {
+  initPetition();
+});
+
 /* Called when succesfully signed in */
 function signupSuccess() {
   // Make an API call to the People API, and print the user's given name.
@@ -11,11 +15,7 @@ function signupSuccess() {
     'requestMask.includeField': 'person.names,person.emailAddresses'
   }).then(function(response) {
     appendPre("Hi, " + response.result.names[0].givenName);
-
-    authorizeButton.style.display = 'none';
-    signoutButton.style.display = 'block';
-    
-    initPetition();
+ 
     $(".authorize-only").show();
 
   }, function(reason) {
@@ -30,13 +30,12 @@ function initPetition() {
     return;
   }
   var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
-  callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
+  // callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
 
-  showLoader(false);
-}
-    
-    showPetitionContent();
-function showPetitionContent() {
+  var p = {'func': 'getSignatures', 'pid': params['petition'], 'callback': 'initSignatureSummary'};
+  get(p);
+
+  /* load petition content */ 
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
   // petition/[petitionID]
 
@@ -44,14 +43,18 @@ function showPetitionContent() {
     var contents = snapshot.val();
     setContents(editor, contents);
   });
-}
 
+  showLoader(false);
+}
+    
 function initSignatureSummary(inRes) {
   console.log(inRes);
 
   SIGNATURE_DATA = inRes.signature;
+
   $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
 
+  var params = getJsonFromUrl(true);
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
   // petition/[petitionID]
 
@@ -66,29 +69,85 @@ function initSignatureSummary(inRes) {
 
   if (SIGNATURE_DATA.length > 0) {
     checkAvailableGraphTypes(); 
-    google.charts.setOnLoadCallback(function() {}); // Show a basic graph initially
+    google.charts.setOnLoadCallback(function() {
+      initFilter(SIGNATURE_DATA);
+    }); // Show a basic graph initially
   } else {
     $(".card").hide();
     $("#msg-no-available-chart").show();
   }
 
-  
+  var a = [];
+  Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
+    if ( ! CATEGORY.includes(key) )
+      a.push( key );
+  });
+
+  prepareVizInterface("line");
+  // updateChartData( formatData(CATEGORY[0], a) );
 
   initListener();
 
   showLoader(false);
 } 
 
+function convertData( inArray ) {
+  var s = "";
+  for (var i = 0; i < inArray.length; i++) {
+    for (var j = 0 ; j < inArray[i].length; j++) {
+      s += (inArray[i][j] + (j == inArray[i].length -1?" \n" : " \t"));
+    }
+  }
+
+  return s;
+} 
+
+function formatData( inXFieldName, inYFiledNames, data_array ) {
+  var s = inXFieldName + " \t";
+  data_array = data_array? data_array: SIGNATURE_DATA;
+
+  for(var i = 0 ;i < inYFiledNames.length; i++) {
+    s += (inYFiledNames[i] + (i == inYFiledNames.length -1?" \n" : " \t"));
+  }
+
+  for( var i = 0; i < data_array.length; i++ ) {
+    var tmp_s = "";
+    var emptyVal = false;
+
+    //TODO how to handle empty val
+    for(var j = 0 ;j < inYFiledNames.length; j++) {
+      if (inYFiledNames[j] in data_array[i])
+        tmp_s += (data_array[i][inYFiledNames[j]] + (j == inYFiledNames.length -1?" \n" : " \t"));
+      else {
+        emptyVal = true;
+        break;
+      }
+    }
+
+    if (!emptyVal && inXFieldName in data_array[i]) {
+      s += (data_array[i][inXFieldName] + " \t");
+      s += tmp_s;
+    }
+  }
+
+  return s;
+}
+
+
+/* Triggered when x-axis and y-axis changed */
 function prepareDrawChart( inEvent ) {
   var graph_type = inEvent.parents('.graph-options').attr('graph-type');
+  graph_type = "line";
   var o = getSelectedOption( graph_type );
 
   if ( graph_type == "area" || graph_type == "line" || graph_type == "bar") {
-    $("#{0}-interface .y-axis div".format(graph_type)).first().attr( "value", o.x[0] );
-    $("#{0}-interface .y-axis p".format(graph_type)).first().text( o.x[0] );
+    $("#axis-select-container .y-axis div").first().attr( "value", o.x[0] );
+    $("#axis-select-container .y-axis p").first().text( o.x[0] );
   }
 
-  drawChart( graph_type, o.x[0], o.y );
+  updateChartData( formatData(o.x[0], o.y, window.currentData()) );
+
+  drawChart( "line", o.x[0], o.y );
 }
 
 function initListener() {
@@ -165,12 +224,14 @@ function countLetter(inElement) {
 }
 
 function getFieldVal(inField, inCondition=function(r){ return true;}) {
-  var arr = []
-  for(var i = 0; i < SIGNATURE_DATA.length; i++) {
-    if( !(inField in SIGNATURE_DATA[i]) ) continue;
-    if( !inCondition(SIGNATURE_DATA[i]) ) continue;
+  var arr = [];
+  var data_array = window.currentData();
 
-    arr.push(SIGNATURE_DATA[i][inField]);
+  for(var i = 0; i < data_array.length; i++) {
+    if( !(inField in data_array[i]) ) continue;
+    if( !inCondition(data_array[i]) ) continue;
+
+    arr.push(data_array[i][inField]);
   }
   
   return arr;
@@ -179,7 +240,7 @@ function getFieldVal(inField, inCondition=function(r){ return true;}) {
 function isFieldNumeric(inField) {
   var arr = getFieldVal(inField);
 
-  return !(arr.map(x => (parseFloat(x))).includes(NaN));
+  return !(arr.map(x => (isNaN(x))).includes(true));
 }
 
 
@@ -231,12 +292,12 @@ function prepareVizInterface(inGraphType) {
     $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
     $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
-    $("#{0}-interface .y-axis".format(inGraphType)).append( $div ); 
+    $("#axis-select-container .y-axis".format(inGraphType)).append( $div ); 
     // $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
     for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
       if ( CATEGORY.includes(key) ) {
-        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+        $("#axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
       }
       else {
         $div = $("<div class='y-value-wrapper' value='{0}''></div>".format(key));
@@ -246,12 +307,29 @@ function prepareVizInterface(inGraphType) {
           $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format(value, value) );    
         });    
         
-        $("#{0}-interface .y-axis".format(inGraphType)).append( $div );
+        $("#axis-select-container .y-axis".format(inGraphType)).append( $div );
       }
     }
   }
   
   initialize_materialize_css();
+}
+
+function updateChartData(inData) {
+  /* filter data */
+
+
+  document.querySelector(".chartbuilder-main textarea").value = inData
+
+  document.addEventListener("click", function(e) {
+    console.log("update chart data"); // Prints "Example of an event"
+  });
+  var event = new CustomEvent("click", { "detail": "Example of an event" });
+  var elem = $(".cb-button.button-group-button")[3];
+
+  elem.dispatchEvent(event); 
+
+  $(elem).trigger("click");
 }
 
 // inValueFields : {"count": fieldName, "sum": [..], "min": [..], "max": [..], "aver": [..], "field": [..]}
@@ -388,17 +466,18 @@ function drawChart(inGraphType, inField, inValueFields) {
   var options = {
       // title: graphData[0][1]
   };
-  chart.draw(data, options);
+
+  updateChartData( convertData(graphData) );
+  // chart.draw(data, options);
 }
 
 function getSelectedOption( inGraphType ) {
   var res = {'x': [], 'y':{}};
 
-  res.x.push($("#{0}-interface .x-axis".format(inGraphType))[0].value);
+  res.x.push($("#axis-select-container .x-axis")[0].value);
 
-  $("#{0}-interface .y-axis".format(inGraphType))
 
-  $("#{0}-interface .y-axis input:checked".format(inGraphType)).each(function(i) { 
+  $("#axis-select-container .y-axis input:checked").each(function(i) { 
     var v = $(this).attr('value');
 
     if (v == "count") {
