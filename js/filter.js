@@ -166,9 +166,9 @@ function initFilter(inData) {
       var date = d3.select(this).selectAll(".date")
           .data(flightsByDate, function(d) { return d.key; });
 
-      date.enter().append("div")
+      date.enter().append("tbody")
           .attr("class", "date")
-        .append("div")
+        .append("blockquote")
           .attr("class", "day")
           .text(function(d) { return d.values[0][numeric_field[0]]; });
 
@@ -177,12 +177,12 @@ function initFilter(inData) {
       var flight = date.order().selectAll(".flight")
           .data(function(d) { return d.values; }, function(d) { return d.index; });
 
-      var flightEnter = flight.enter().append("div")
+      var flightEnter = flight.enter().append("tr")
           .attr("class", "flight");
 
 
       for( var key in SIGNATURE_DATA[SIGNATURE_DATA.length -1]) {
-        flightEnter.append("div")
+        flightEnter.append("td")
           .attr("class", key)
           .text(function(d) { return d[key]; });
       }
@@ -243,7 +243,7 @@ function initFilter(inData) {
               .attr("class", "reset")
               .text("reset")
               .style("display", "none");
-
+          
           g = div.append("svg")
               .attr("width", width + margin.left + margin.right)
               .attr("height", height + margin.top + margin.bottom)
