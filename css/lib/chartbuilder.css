@@ -272,9 +272,9 @@ th {
   outline: 0;
   margin-top: 0;
   vertical-align: middle;
-  font-size: 1.4em;
+  font-size: 1.0em;
   line-height: 14px;
-  height: 55px;
+  height: 30px;
   padding: 4px 10px 0px 10px;
   color: #333;
   -webkit-transition: background-color 0.2s linear;
@@ -404,6 +404,9 @@ th {
   background-color: #fff;
   outline: none;
 }
+.cb-dropdown input {
+  font-size: 1.0rem !important;
+}
 .cb-labelled-tangle {
   vertical-align: middle;
   line-height: 28px;
@@ -424,7 +427,8 @@ th {
   margin: 0 0 0 10px;
   background-color: #fff;
   width: 50px;
-  font-size: 1.2em;
+  font-size: 1.0em !important;
+  height: 1.5rem !important;
 }
 .cb-labelled-tangle label {
   font-size: 1.4em;
@@ -477,7 +481,7 @@ th {
 }
 .cb-text-input label {
   height: 55px;
-  font-size: 1.4em;
+  font-size: 1.0em;
   top: 21px;
   opacity: 1;
   left: 10px;
@@ -1453,7 +1457,7 @@ canvas {
   padding: 0.5em 0 0 0.25em;
 }*/
 .chartbuilder-container {
-  margin-top: 3.75em;
+  margin-top: 0.15em;
   position: relative;
   overflow: hidden;
 }
@@ -1732,7 +1736,7 @@ svg .svg-background {
 }
 .chartbuilder-editor .editor-options {
   font-family: 'Khula-Regular', Arial, Helvetica, sans-serif;
-  margin: 30px 0;
+  margin: 10px 0;
   display: block;
   width: 100%;
 }
@@ -1815,7 +1819,7 @@ svg .svg-background {
 }
 .chartbuilder-editor .series-control .axis-color label {
   color: #bebebe;
-  font-size: 16px;
+  font-size: 1.0rem;
   line-height: 24px;
 }
 @media screen and (max-width: 800px) {
@@ -1919,7 +1923,7 @@ svg .svg-background {
   display: block;
 }
 .chartbuilder-editor .scale-options {
-  margin: 30px 0;
+  margin: 20px 0;
 }
 .chartbuilder-editor .labelled-dropdown {
   display: table;
@@ -1949,7 +1953,8 @@ svg .svg-background {
 }
 .chartbuilder-editor .scale-tangle-inputs .cb-labelled-tangle {
   display: table-cell;
-  padding: 6px 12px;
+  padding: 3px 4px;
+  text-align: center;
 }
 .chartbuilder-editor .scale-tangle-inputs .cb-labelled-tangle .cb-tangle {
   margin-left: 5px;
@@ -1967,7 +1972,7 @@ svg .svg-background {
   }
 }
 .chartbuilder-editor .editor-label {
-  font-size: 18px;
+  font-size: 1.0rem;
   font-family: 'Khula-Regular', Arial, Helvetica, sans-serif;
 }
 .chartbuilder-editor .load-localstorage {
@@ -2111,13 +2116,18 @@ svg .svg-background {
 
 .chartbuilder-editor h2,
 .chartbuilder-editor h5 {
-  font-size: 1.64rem;
+  font-size: 1.34rem;
   line-height: 110%;
   margin: 1.0933333333rem 0 .656rem 0;
 }
 
 .chartbuilder-editor h3 {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   line-height: 110%;
   margin: .7666666667rem 0 .46rem 0;
+}
+
+.chartbuilder-main .section {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
 }
