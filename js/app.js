@@ -172,3 +172,4 @@ const SUM = arr => arr.reduce((a,b) => a + b, 0);
 const MIN = arr => arr.reduce((min, p) => p < min ? p : min, arr[0]);
 const MAX = arr => arr.reduce((max, p) => p > max ? p : max, arr[0]);
 const AVER = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+const EQ = function(array1, array2) {if(array1.sort().join(',')=== array2.sort().join(',')) return true; else return false;};
