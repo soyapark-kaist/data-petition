@@ -1458,6 +1458,21 @@ canvas {
   overflow: hidden;
 }
 .chartbuilder-renderer {
+  text-align: center;
+  width: 100%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+  float: left;
+  box-sizing: border-box;
+  padding: 0 .75rem;
+  min-height: 1px;
+  height: 100%;
+  max-width: 100%;
+  margin-top: 20px;
+}
+/*
+.chartbuilder-renderer {
   width: 640px;
   left: 10px;
   top: 3em;
@@ -1465,7 +1480,7 @@ canvas {
   overflow-x: hidden;
   height: 100%;
   max-width: 100%;
-  /*position: fixed;*/
+  position: fixed;
   margin-top: 20px;
 }
 .chartbuilder-renderer .desktop {
@@ -1510,6 +1525,7 @@ canvas {
   top: 116px;
   left: 29px;
 }
+*/
 div.renderer-wrapper {
   -webkit-font-smoothing: antialiased;
   width: 100%;
@@ -1682,6 +1698,21 @@ svg .svg-background {
   fill: #ccc;
 }
 .chartbuilder-editor {
+  width: 100%;
+  margin-left: auto;
+  left: auto;
+  right: auto;
+  float: left;
+  box-sizing: border-box;
+  padding: 0 .75rem;
+  min-height: 1px;
+  padding: 0 10px;
+  min-width: 100px;
+}
+
+/*
+
+.chartbuilder-editor {
   margin-left: 680px;
   margin-bottom: 30px;
   display: inline-block;
@@ -1689,10 +1720,10 @@ svg .svg-background {
   padding: 0 10px;
   min-width: 100px;
 }
+
+*/
+
 .chartbuilder-editor span.step-number {
-  background-color: #333;
-  border-radius: 100px;
-  color: #fff;
   width: 1.5em;
   height: 1.5em;
   display: inline-block;
@@ -2076,4 +2107,17 @@ svg .svg-background {
     display: block;
     width: 100%;
   }
+}
+
+.chartbuilder-editor h2,
+.chartbuilder-editor h5 {
+  font-size: 1.64rem;
+  line-height: 110%;
+  margin: 1.0933333333rem 0 .656rem 0;
+}
+
+.chartbuilder-editor h3 {
+  font-size: 1.15rem;
+  line-height: 110%;
+  margin: .7666666667rem 0 .46rem 0;
 }
