@@ -288,7 +288,9 @@ function prepareVizInterface(inGraphType) {
   }
 
   else {
-    var $div = $("<div value={0}></div>".format(CATEGORY[0]));
+    var col_length = Math.round(12/SIGNATURE_DATA.length)
+    // div에 value가...?
+    var $div = $("<div class='col s{1} center' value={0}></div>".format(CATEGORY[0], col_length));
     $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
     $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
@@ -300,7 +302,7 @@ function prepareVizInterface(inGraphType) {
         $("#axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
       }
       else {
-        $div = $("<div class='y-value-wrapper' value='{0}''></div>".format(key));
+        $div = $("<div class='y-value-wrapper col s{1} center' value='{0}''></div>".format(key, col_length));
         $div.append( '<p>{0}</p>'.format(key) ); 
 
         $.each([ 'min', 'max', 'avg', 'sum' ], function( index, value ) {
