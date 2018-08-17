@@ -1473,7 +1473,7 @@ canvas {
   min-height: 1px;
   height: 100%;
   max-width: 100%;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 /*
 .chartbuilder-renderer {

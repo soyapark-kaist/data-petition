@@ -39,12 +39,8 @@
       <div class="container">
         <h1 class="header center orange-text">[ptitle]</h1>
         <div class="row center">
-          <!-- <h5 class="header col s12 light">Let's go CHI! WOW!</h5> -->
-        </div>
-        <div class="row center">
           <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Sign this petition"
                  onclick="window.open('http://www.website.com/page')">Sign this petition</button>
-          <!-- <button id="edit_signature">edit signature</button> -->
           <div class="signer-progress">
             <h2 id="participants-number"></h2>
             <h5>of partipants have submitted data signature!</h5>
@@ -74,33 +70,37 @@
         </div>
 
         <div class="row center">
-          <div id="charts">
-            <div id="hour-chart" class="chart col s12 l6">
-              <div class="title">Ping</div>
-            </div>
-            <div id="delay-chart" class="chart col s12 l6">
-              <div class="title">Download speed (Mb/s)</div>
-            </div>
-            <div id="distance-chart" class="chart col s12 l6">
-              <div class="title">Upload speed (Mb/s)</div>
-            </div>
-            <div id="date-chart" class="chart col s12 l6">
-              <div class="title">Date</div>
+          <h5 class="data-points-stats">
+            <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data points selected.
+          </h5>
+          <div class="col s12 m6">
+            <div class="z-depth-2">
+              <ul class="tabs">
+                <li class="tab col s3"><a class="active" href="#hour-chart">Ping</a></li>
+                <li class="tab col s3"><a href="#delay-chart">Download speed (Mb/s)</a></li>
+                <li class="tab col s3"><a href="#distance-chart">Upload speed (Mb/s)</a></li>
+                <li class="tab col s3"><a href="#date-chart">Date</a></li>
+              </ul>
+              <div id="charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
+                <div id="hour-chart" class="chart">
+                  <span>Ping</span>
+                </div>
+                <div id="delay-chart" class="chart">
+                  <span>Download speed (Mb/s)</span>
+                </div>
+                <div id="distance-chart" class="chart">
+                  <span>Upload speed (Mb/s)</span>
+                </div>
+                <div id="date-chart" class="chart">
+                  <span>Date</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="row center">
-          <div id="totals">
-            <h5>
-              <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data points selected.
-            </h5>
-          </div>
-        </div>
-
-        <div class="row">
-          <div id="lists" class="col s12 m8 offset-m2">
-            <table id="flight-list" class="list centered"></table>
+          <div class="col s12 m6" id="totals">
+            <div id="lists" class="z-depth-2 tooltipped" data-position="bottom" data-tooltip='<i class="material-icons">swap_vert</i>'>
+              <table id="flight-list" class="list centered"></table>
+            </div>
           </div>
         </div>
 
