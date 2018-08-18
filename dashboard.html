@@ -39,8 +39,11 @@
       <div class="container">
         <h1 class="header center orange-text">[ptitle]</h1>
         <div class="row center">
-          <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Sign this petition"
-                 onclick="window.open('http://www.website.com/page')">Sign this petition</button>
+        </div>
+        <div class="row center">
+          <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Sign this petition">Sign this petition <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+          <!-- <button id="edit_signature">edit signature</button> -->
+
           <div class="signer-progress">
             <h2 id="participants-number"></h2>
             <h5>of partipants have submitted data signature!</h5>
@@ -81,7 +84,7 @@
                 <li class="tab col s3"><a href="#distance-chart">Upload speed (Mb/s)</a></li>
                 <li class="tab col s3"><a href="#date-chart">Date</a></li>
               </ul>
-              <div id="charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
+              <div id="filter-charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
                 <div id="hour-chart" class="chart">
                   <span>Ping</span>
                 </div>

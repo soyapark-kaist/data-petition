@@ -27,6 +27,14 @@ function initFilter(inData) {
       numeric_field.push( key );
   });
 
+  // Past div container for number fields
+    // TODO
+    
+  for (var i = 0; i < numeric_field.length; i++) {
+    var $container = $('<div id="{0}-chart" class="chart"><div class="title">{1}</div></div>'.format(numeric_field[i], numeric_field[i]));
+    $("#filter-charts").append( $container );
+  }
+
   // A nest operator, for grouping the flight list.
   nestByDate = d3.nest()
       .key(function(d) { return d[CATEGORY[0]]; });
@@ -60,7 +68,7 @@ function initFilter(inData) {
   
   for (var i = 0; i < numeric_field.length; i++ ) {
     console.log(numeric_field[i]);
-    var dim = flight.dimension(function(d) { return Math.min(199, d[numeric_field[i]]); });
+    var dim = flight.dimension(function(d) { return d[numeric_field[i]]; });
     var dims = dim.group(function(d) { return Math.floor(d / 50) * 50; });
 
     dimensions[numeric_field[i]] = {'dimension': dim, 'groups': dims};
@@ -100,17 +108,22 @@ function initFilter(inData) {
   ];
 
   for(var key in dimensions) {
+    var min = d3.min(flights, function(d) { return parseFloat(d[key]); }), max = d3.max(flights, function(d) { return parseFloat(d[key]); }),
+      r = max -min;
+
     charts.push(barChart()
         .dimension(dimensions[key]['dimension'])
         .group(dimensions[key]['groups'])
       .x(d3.scale.linear()
-        .domain([0, 200])
-        .rangeRound([0, 10 * 40])));
+        .domain([min - r/10.0, max + r/10.0])
+        .rangeRound([0, 300])
+        ));
   }
 
   // Given our array of charts, which we assume are in the same order as the
   // .chart elements in the DOM, bind the charts to the DOM and render them.
   // We also listen to the chart's brush events to update the display.
+
   var chart = d3.selectAll(".chart")
       .data(charts)
       .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
@@ -224,13 +237,13 @@ function initFilter(inData) {
         dimension,
         group,
         round;
+        // debugger;
 
     function chart(div) {
       var width = x.range()[1],
           height = y.range()[0];
 
-      // TODO Y axis max value
-      y.domain([0, 10]);
+      y.domain([0, SIGNATURE_DATA.length]);
 
       div.each(function() {
         var div = d3.select(this),

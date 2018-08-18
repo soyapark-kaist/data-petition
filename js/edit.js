@@ -1,3 +1,6 @@
+var params = getJsonFromUrl(true);
+var formEditLink, publishLink;
+
 /* Called when succesfully signed in */
 function signupSuccess() {
   showLoader(true);
@@ -23,8 +26,8 @@ function signupSuccess() {
 }
 
 function displayEditForm(inRes) {
-  var formEditLink = inRes["editLink"],
-      publishLink = inRes["publishLink"];
+  formEditLink = inRes["editLink"],
+    publishLink = inRes["publishLink"];
 
   // $("#display-link").html("Your petition edit link (don't share this link with unauthorized): <a href={0}>{1}</a>".format(formEditLink, formEditLink));
   //TODO: refresh with the focus / update the iframe  
@@ -43,46 +46,36 @@ function displayEditForm(inRes) {
 } 
 
 function displayQuestions(inRes) {
-  // for (var key in inRes) {
-  //   $("#questions-public-setting").append(
-  //     '<p><label mv-multiple property=""> <input property="done" type="checkbox" name="questions-public" value="{0}" checked="checked"> <span>{1}</span> </label></p>'.format(inRes[key], inRes[key])
-  //   );
-  // }
-
-  var params = getJsonFromUrl(true);
-  
-  // starCountRef.on('value', function(snapshot) {
-  //   updateStarCount(postElement, snapshot.val());
-  // });
-
-  //var updates = {};
-  // updates["/question"]
-  // questionRef.update();
-
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
   // petition/[petitionID]
 
   questionRef.once("value").then(function(snapshot) {
     var questions = snapshot.val() ? snapshot.val() : [];
-    var data_to_update = {};
+    var data_to_update = [];
     var onSuccess = function() {};
 
     console.log(questions);
-    if(!questions.length) onSuccess = function() {location.reload();};
+
     // TODO if inRes is not at DB yet, then add. 
-    var questionID = [];
+    var questionID = [], question_isPublic = {};
     for(var key in questions) {
       questionID.push( questions[key].id );
+      question_isPublic[questions[key].id] = questions[key]["done"];
     }
 
-    var index = questions.length;
+    if(!EQ(questionID, Object.keys(inRes))) onSuccess = function() {location.reload();};
+
+    var index = 0;
 
     for (var key in inRes) {
       if( !questionID.includes(key) )
-        data_to_update[index++] = {"done": true, "title": inRes[key], "id": key};
+        data_to_update.push( {"done": true, "title": inRes[key], "id": key} );
+      else {
+        data_to_update.push( {"done": question_isPublic[key], "title": inRes[key], "id": key} );
+      } 
     } 
 
-    updateDB("petition/" + params['petition'] + "/question", data_to_update, onSuccess);
+    setDB("petition/" + params['petition'] + "/question", data_to_update, onSuccess);
 
   });
 
@@ -94,9 +87,27 @@ function displayQuestions(inRes) {
 }
 
 function initListener() {
+
   $(document).on('click', '.mv-save', function() {
     // Save contetns to DB. 
     setDB("petition/" + params["petition"] + "/contents", getContents(editor));
+  });
+
+  /* If user changes the setting for geolocation */
+  var geolocationSetting = firebase.database().ref("petition/" + params["petition"] + "/geolocation");
+  geolocationSetting.on('value', function(snapshot) {
+    if (snapshot.val()['collect']) {
+      if( !snapshot.val()['id'])
+      // Add location question to the survey
+      callScriptFunction('addQuestion', [formEditLink, "Your current location (auto-complete)"], function(inRes) {setDB("petition/" + params["petition"] + "/geolocation/id", inRes.id);}, displayErrorMsg);
+
+
+    } else {
+      // remove the location question from the survey
+      if(snapshot.val()['id'])
+        callScriptFunction('removeQuestion', [formEditLink, snapshot.val()['id']], function(inRes) { firebase.database().ref("petition/" + params["petition"] + "/geolocation/id").remove();}, displayErrorMsg);
+    }
+    
   });
 }
 
@@ -115,10 +126,9 @@ function updateDB(inRef, inData, inOnSuccess) {
       });
 }
 
-function setDB(inRef, inData) {
+function setDB(inRef, inData, inOnSuccess=function() {}) {
   var playersRef = firebase.database().ref(inRef);
   // users/2017-3-6
-  debugger;
 
   playersRef.set(inData,
       function(error) {
@@ -126,6 +136,7 @@ function setDB(inRef, inData) {
               console.log(error);
           } else {
               console.log("push to DB", inData);
+              inOnSuccess();
           }
 
       });
