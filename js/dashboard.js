@@ -95,8 +95,9 @@ function initSignatureSummary(inRes) {
 
   if (SIGNATURE_DATA.length > 0) {
     checkAvailableGraphTypes(); 
+    initFilter(SIGNATURE_DATA);
     google.charts.setOnLoadCallback(function() {
-      initFilter(SIGNATURE_DATA);
+      
     }); // Show a basic graph initially
   } else {
     $(".card").hide();
@@ -496,11 +497,11 @@ function drawChart(inGraphType, inField, inValueFields) {
       }
     }
 
-    data = google.visualization.arrayToDataTable( graphData );
+    // data = google.visualization.arrayToDataTable( graphData );
 
-    if(inGraphType == "line") chart = new google.visualization.LineChart(document.getElementById('chart-container'));
-    else if(inGraphType == "area") chart = new google.visualization.AreaChart(document.getElementById('chart-container'));
-    else chart = new google.visualization.BarChart(document.getElementById('chart-container'));
+    // if(inGraphType == "line") chart = new google.visualization.LineChart(document.getElementById('chart-container'));
+    // else if(inGraphType == "area") chart = new google.visualization.AreaChart(document.getElementById('chart-container'));
+    // else chart = new google.visualization.BarChart(document.getElementById('chart-container'));
 
   } else if( inGraphType == "scatter" ) {
     var graphData = [[inField]];

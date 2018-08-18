@@ -34,17 +34,16 @@
         </ul>
       </div>
     </nav>
-    <!-- <iframe src="http://localhost:3000"></iframe> -->
     <div class="section no-pad-bot">
       <div class="container">
         <h1 class="header center orange-text">[ptitle]</h1>
         <div class="row center">
         </div>
         <div class="row center">
-          <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Sign this petition">Sign this petition <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+          <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Also have complaints?">Also have complaints? <i id="icon-location-marker" class="material-icons">location_searching</i></button>
           <!-- <button id="edit_signature">edit signature</button> -->
 
-          <div class="signer-progress">
+          <!-- <div class="signer-progress">
             <h2 id="participants-number"></h2>
             <h5>of partipants have submitted data signature!</h5>
             <div class="col m6 offset-m3 s12">
@@ -52,7 +51,7 @@
                 <div class="determinate" style="width: 70%"></div>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <br/>
           <br/>
@@ -74,18 +73,21 @@
 
         <div class="row center">
           <h5 class="data-points-stats">
-            <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data points selected.
+            <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data complaints selected.
           </h5>
+          <!-- Dependency and Compatibility Issue ?-->
+          <div class="chartbuilder-container row"></div>
+
           <div class="col s12 m6">
             <div class="z-depth-2">
               <ul class="tabs">
-                <li class="tab col s3"><a class="active" href="#hour-chart">Ping</a></li>
+                <!-- <li class="tab col s3"><a class="active" href="#hour-chart">Ping</a></li>
                 <li class="tab col s3"><a href="#delay-chart">Download speed (Mb/s)</a></li>
                 <li class="tab col s3"><a href="#distance-chart">Upload speed (Mb/s)</a></li>
-                <li class="tab col s3"><a href="#date-chart">Date</a></li>
+                <li class="tab col s3"><a href="#date-chart">Date</a></li> -->
               </ul>
               <div id="filter-charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
-                <div id="hour-chart" class="chart">
+                <!-- <div id="hour-chart" class="chart">
                   <span>Ping</span>
                 </div>
                 <div id="delay-chart" class="chart">
@@ -96,7 +98,7 @@
                 </div>
                 <div id="date-chart" class="chart">
                   <span>Date</span>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -121,8 +123,6 @@
           </div>
         </div>
 
-        <!-- Dependency and Compatibility Issue ?-->
-        <div class="chartbuilder-container row"></div>
       </div>
     </div>
     

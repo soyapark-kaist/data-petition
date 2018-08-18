@@ -31,7 +31,16 @@ function initFilter(inData) {
     // TODO
     
   for (var i = 0; i < numeric_field.length; i++) {
-    var $container = $('<div id="{0}-chart" class="chart"><div class="title">{1}</div></div>'.format(numeric_field[i], numeric_field[i]));
+    var $tab, selector_id = numeric_field[i].split(" ").join("").split(".").join("");
+
+    if (i == 0)
+      $tab = $('<li class="tab col s3"><a class="active" href="#{0}-chart">{1}</a></li>'.format(selector_id, numeric_field[i]));
+    else 
+      $tab = $('<li class="tab col s3"><a href="#{0}-chart">{1}</a></li>'.format(selector_id, numeric_field[i]));
+
+    $(".z-depth-2 .tabs").append( $tab );
+
+    var $container = $('<div id="{0}-chart" class="chart"><span class="title">{1}</span></div>'.format(selector_id, numeric_field[i]));
     $("#filter-charts").append( $container );
   }
 
