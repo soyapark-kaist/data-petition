@@ -49,9 +49,53 @@ function initPetition() {
     
 function initSignatureSummary(inRes) {
   console.log(inRes);
-
-  SIGNATURE_DATA = inRes.signature;
   var params = getJsonFromUrl(true);
+
+  // Project only public data
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
+  questionRef.once("value").then(function(snapshot) {
+      var questions = snapshot.val();
+
+      var q = {};
+      for(var i =0; i< questions.length; i++) {
+        q[questions[i]['title']] = questions[i]['done'];
+      } 
+
+      for(var i =0; i< inRes.signature.length; i++) {
+        var clone = Object.assign({}, inRes.signature[i]);
+
+        Object.keys( inRes.signature[i] ).forEach(function(key) {
+          if( !q[key] )
+            delete clone[key];
+        });
+
+        SIGNATURE_DATA.push(clone);
+        
+      }
+      
+      // SIGNATURE_DATA = inRes.signature;
+
+      if (SIGNATURE_DATA.length > 0) {
+        checkAvailableGraphTypes(); 
+        initFilter(SIGNATURE_DATA);
+      } else {
+        $(".card").hide();
+        $("#msg-no-available-chart").show();
+      }
+
+      var a = [];
+      Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
+        if ( ! CATEGORY.includes(key) )
+          a.push( key );
+      });
+
+      prepareVizInterface("line");
+      // updateChartData( formatData(CATEGORY[0], a) );
+
+      initListener();
+
+      showLoader(false);
+  });
 
   /* Set signature btn. */ 
   // if this petition requires geolocation, send it to prefilled location.
@@ -91,30 +135,7 @@ function initSignatureSummary(inRes) {
     $(".progress .determinate").css("width", (SIGNATURE_DATA.length / goal * 100) + "%");
   });
 
-  google.charts.load('current', {'packages':['corechart']});
-
-  if (SIGNATURE_DATA.length > 0) {
-    checkAvailableGraphTypes(); 
-    google.charts.setOnLoadCallback(function() {
-      initFilter(SIGNATURE_DATA);
-    }); // Show a basic graph initially
-  } else {
-    $(".card").hide();
-    $("#msg-no-available-chart").show();
-  }
-
-  var a = [];
-  Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
-    if ( ! CATEGORY.includes(key) )
-      a.push( key );
-  });
-
-  prepareVizInterface("line");
-  // updateChartData( formatData(CATEGORY[0], a) );
-
-  initListener();
-
-  showLoader(false);
+  
 } 
 
 function detectLocation(inOnSuccess) {
@@ -341,7 +362,15 @@ function prepareVizInterface(inGraphType) {
   }
 
   else {
-    var $div = $("<div value={0}></div>".format(CATEGORY[0]));
+    var col_nums = 1; // Default 1 for x-axis
+    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
+      if ( ! CATEGORY.includes(key))
+        col_nums += 1;
+    }
+    var col_length = Math.round(12/col_nums);
+
+    // div에 value가...?
+    var $div = $("<div class='col s{1} center' value={0}></div>".format(CATEGORY[0], col_length));
     $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
     $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
@@ -353,7 +382,7 @@ function prepareVizInterface(inGraphType) {
         $("#axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
       }
       else {
-        $div = $("<div class='y-value-wrapper' value='{0}''></div>".format(key));
+        $div = $("<div class='y-value-wrapper col s{1} center' value='{0}''></div>".format(key, col_length));
         $div.append( '<p>{0}</p>'.format(key) ); 
 
         $.each([ 'min', 'max', 'avg', 'sum' ], function( index, value ) {
@@ -365,6 +394,7 @@ function prepareVizInterface(inGraphType) {
     }
   }
   
+  manipulate_chart_configuration();
   initialize_materialize_css();
 }
 
@@ -487,11 +517,11 @@ function drawChart(inGraphType, inField, inValueFields) {
       }
     }
 
-    data = google.visualization.arrayToDataTable( graphData );
+    // data = google.visualization.arrayToDataTable( graphData );
 
-    if(inGraphType == "line") chart = new google.visualization.LineChart(document.getElementById('chart-container'));
-    else if(inGraphType == "area") chart = new google.visualization.AreaChart(document.getElementById('chart-container'));
-    else chart = new google.visualization.BarChart(document.getElementById('chart-container'));
+    // if(inGraphType == "line") chart = new google.visualization.LineChart(document.getElementById('chart-container'));
+    // else if(inGraphType == "area") chart = new google.visualization.AreaChart(document.getElementById('chart-container'));
+    // else chart = new google.visualization.BarChart(document.getElementById('chart-container'));
 
   } else if( inGraphType == "scatter" ) {
     var graphData = [[inField]];
@@ -558,9 +588,23 @@ function getSelectedOption( inGraphType ) {
 }
 
 function initialize_materialize_css() {
-  console.log('initialize')
-  var elems = document.querySelectorAll('select');
-  var instances = M.FormSelect.init(elems, {});
+  var select_elems = document.querySelectorAll('select');
+  if (select_elems)
+    var selects = M.FormSelect.init(select_elems, {});
+  
+  var tabs_elems = document.querySelectorAll('.tabs');
+  if (tabs_elems)
+    var tabs = M.Tabs.init(tabs_elems, {});
+  
+  var tooltips_elems = document.querySelectorAll('.tooltipped');
+  if (tooltips_elems)
+    var tooltips = M.Tooltip.init(tooltips_elems, {'html': true});
+
+  var collapsible_elems = document.querySelectorAll('.collapsible');
+  if (collapsible_elems)
+    var instances = M.Collapsible.init(collapsible_elems, {});
+
+  console.log('initialized')
 }
 
 function addModalClickEventListener(query, func, ...args) {
@@ -585,4 +629,26 @@ function removeHighlightFromCards(className) {
   for (var i = 0; i < elements.length; i++) {
     $(elements[i]).removeClass(className);
   }
+}
+
+function manipulate_chart_configuration() {
+  var $chartbuilder_editor = $('.chartbuilder-editor');
+  $chartbuilder_editor.before('<div class="center"><a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a></div>')
+  $chartbuilder_editor.hide();
+  $(document).on('click', '.chart-editor-btn', () => {
+    $chartbuilder_editor.toggle({
+      'duration': 500,
+      'done': () => {
+        var $chart_editor_btn = $('.chart-editor-btn');
+        if ('Edit Chart Configuration' == $chart_editor_btn.text()) {
+          $chart_editor_btn.text('Hide Chart Configuration');
+        } else {
+          $chart_editor_btn.text('Edit Chart Configuration');
+        }
+      }
+    });
+    $('html,body').animate({
+      scrollTop: $chartbuilder_editor.offset().top - $('.chartbuilder-renderer').height() - $('.chart-editor-btn').height(),
+    });
+  })
 }
