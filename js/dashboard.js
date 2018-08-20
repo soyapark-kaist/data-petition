@@ -49,9 +49,53 @@ function initPetition() {
     
 function initSignatureSummary(inRes) {
   console.log(inRes);
-
-  SIGNATURE_DATA = inRes.signature;
   var params = getJsonFromUrl(true);
+
+  // Project only public data
+  var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
+  questionRef.once("value").then(function(snapshot) {
+      var questions = snapshot.val();
+
+      var q = {};
+      for(var i =0; i< questions.length; i++) {
+        q[questions[i]['title']] = questions[i]['done'];
+      } 
+
+      for(var i =0; i< inRes.signature.length; i++) {
+        var clone = Object.assign({}, inRes.signature[i]);
+
+        Object.keys( inRes.signature[i] ).forEach(function(key) {
+          if( !q[key] )
+            delete clone[key];
+        });
+
+        SIGNATURE_DATA.push(clone);
+        
+      }
+      
+      // SIGNATURE_DATA = inRes.signature;
+
+      if (SIGNATURE_DATA.length > 0) {
+        checkAvailableGraphTypes(); 
+        initFilter(SIGNATURE_DATA);
+      } else {
+        $(".card").hide();
+        $("#msg-no-available-chart").show();
+      }
+
+      var a = [];
+      Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
+        if ( ! CATEGORY.includes(key) )
+          a.push( key );
+      });
+
+      prepareVizInterface("line");
+      // updateChartData( formatData(CATEGORY[0], a) );
+
+      initListener();
+
+      showLoader(false);
+  });
 
   /* Set signature btn. */ 
   // if this petition requires geolocation, send it to prefilled location.
@@ -91,31 +135,7 @@ function initSignatureSummary(inRes) {
     $(".progress .determinate").css("width", (SIGNATURE_DATA.length / goal * 100) + "%");
   });
 
-  google.charts.load('current', {'packages':['corechart']});
-
-  if (SIGNATURE_DATA.length > 0) {
-    checkAvailableGraphTypes(); 
-    initFilter(SIGNATURE_DATA);
-    google.charts.setOnLoadCallback(function() {
-      
-    }); // Show a basic graph initially
-  } else {
-    $(".card").hide();
-    $("#msg-no-available-chart").show();
-  }
-
-  var a = [];
-  Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
-    if ( ! CATEGORY.includes(key) )
-      a.push( key );
-  });
-
-  prepareVizInterface("line");
-  // updateChartData( formatData(CATEGORY[0], a) );
-
-  initListener();
-
-  showLoader(false);
+  
 } 
 
 function detectLocation(inOnSuccess) {
