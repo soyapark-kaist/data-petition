@@ -67,4 +67,15 @@ function get(params) {
 	  });
 } 
 
+/* Randomly generate unique ID. */
+function generateID(inLength) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < inLength; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 $("#petition-container").attr("mv-app", "petition/" + getJsonFromUrl(true)['petition']);

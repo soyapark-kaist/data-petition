@@ -126,6 +126,22 @@ function updateDB(inRef, inData, inOnSuccess) {
       });
 }
 
+function pushDB(inRef, inData, inOnSuccess=function() {}) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+
+  playersRef.push(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              console.log("push to DB", inData);
+              inOnSuccess();
+          }
+
+      });
+}
+
 function setDB(inRef, inData, inOnSuccess=function() {}) {
   var playersRef = firebase.database().ref(inRef);
   // users/2017-3-6
