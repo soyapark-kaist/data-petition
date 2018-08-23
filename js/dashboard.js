@@ -28,7 +28,7 @@ function initPetition() {
   if( !params['petition'] ) {
     alert("This petition not exist!")
     return;
-  }
+  } 
   var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
   // callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
 
@@ -125,17 +125,15 @@ function initSignatureSummary(inRes) {
 
 
   /* Set progress bar. */ 
-  var goalRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
-  // petition/[petitionID]
-  //location_searching
-  goalRef.once("value").then(function(snapshot) {
-    var goal = parseInt(snapshot.val()) ? parseInt(snapshot.val()) : 100;
+  // var goalRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
+  // // petition/[petitionID]
+  // //location_searching
+  // goalRef.once("value").then(function(snapshot) {
+  //   var goal = parseInt(snapshot.val()) ? parseInt(snapshot.val()) : 100;
   
-    $("#participants-number").text(SIGNATURE_DATA.length);
-    $(".progress .determinate").css("width", (SIGNATURE_DATA.length / goal * 100) + "%");
-  });
-
-  
+  //   $("#participants-number").text(SIGNATURE_DATA.length);
+  //   $(".progress .determinate").css("width", (SIGNATURE_DATA.length / goal * 100) + "%");
+  // });
 } 
 
 function detectLocation(inOnSuccess) {
@@ -400,13 +398,8 @@ function prepareVizInterface(inGraphType) {
 
 function updateChartData(inData) {
   /* filter data */
-
-
   document.querySelector(".chartbuilder-main textarea").value = inData
 
-  document.addEventListener("click", function(e) {
-    console.log("update chart data"); // Prints "Example of an event"
-  });
   var event = new CustomEvent("click", { "detail": "Example of an event" });
   var elem = $(".cb-button.button-group-button")[3];
 

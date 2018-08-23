@@ -67,4 +67,62 @@ function get(params) {
 	  });
 } 
 
+/* Randomly generate unique ID. */
+function generateID(inLength) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < inLength; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+function updateDB(inRef, inData, inOnSuccess) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+
+  playersRef.update(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              inOnSuccess();
+          }
+
+      });
+}
+
+function pushDB(inRef, inData, inOnSuccess=function() {}) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+
+  playersRef.push(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              console.log("push to DB", inData);
+              inOnSuccess();
+          }
+
+      });
+}
+
+function setDB(inRef, inData, inOnSuccess=function() {}) {
+  var playersRef = firebase.database().ref(inRef);
+  // users/2017-3-6
+
+  playersRef.set(inData,
+      function(error) {
+          if (error) {
+              console.log(error);
+          } else {
+              console.log("push to DB", inData);
+              inOnSuccess();
+          }
+
+      });
+}
+
 $("#petition-container").attr("mv-app", "petition/" + getJsonFromUrl(true)['petition']);

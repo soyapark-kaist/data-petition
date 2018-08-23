@@ -58,7 +58,6 @@ function updateSigninStatus(isSignedIn) {
 
     signupSuccess();
   } else {
-    debugger;
     $("#content").hide();
 
     $("#msg_request_login").show();
