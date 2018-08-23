@@ -123,14 +123,6 @@ function initSignatureSummary(inRes) {
     
   });
 
-  // When initially loaded, only load the lastest comment 
-  var commentRef = firebase.database().ref("petition/" + params['petition'] + "/comments");
-  commentRef.limitToLast(1).once('value', function(snapshot) {
-    for(var key in snapshot.val()){
-        console.log("snapshot key" + key);
-    }
-  });
-
 
   /* Set progress bar. */ 
   // var goalRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
@@ -406,8 +398,6 @@ function prepareVizInterface(inGraphType) {
 
 function updateChartData(inData) {
   /* filter data */
-
-
   document.querySelector(".chartbuilder-main textarea").value = inData
 
   var event = new CustomEvent("click", { "detail": "Example of an event" });

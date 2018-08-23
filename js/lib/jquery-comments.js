@@ -584,7 +584,7 @@
                     commentJSON.file = file;
                     commentJSON.fileURL = 'C:/fakepath/' + file.name;
                     commentJSON.fileMimeType = file.type;
-
+                    debugger;
                     // Reverse mapping
                     commentJSON = self.applyExternalMappings(commentJSON);
                     commentArray.push(commentJSON);
@@ -1230,7 +1230,8 @@
                     text: this.options.textFormatter(this.options.noAttachmentsText)
                 });
                 var noAttachmentsIcon = $('<i/>', {
-                    'class': 'fa fa-paperclip fa-2x'
+                    'class': 'material-icons',
+                    'text': 'attachment'
                 });
                 if(this.options.attachmentIconURL.length) {
                     noAttachmentsIcon.css('background-image', 'url("'+this.options.attachmentIconURL+'")');
@@ -1254,7 +1255,8 @@
                 });
 
                 var uploadIcon = $('<i/>', {
-                    'class': 'fa fa-paperclip fa-4x'
+                    'class': 'material-icons',
+                    'text': 'attachment'
                 });
                 if(this.options.uploadIconURL.length) {
                     uploadIcon.css('background-image', 'url("'+this.options.uploadIconURL+'")');
@@ -1362,7 +1364,8 @@
                         'class': 'enabled upload'
                     });
                     var uploadIcon = $('<i/>', {
-                        'class': 'fa fa-paperclip'
+                        'class': 'material-icons',
+                        'text': 'attachment'
                     });
                     var fileInput = $('<input/>', {
                         type: 'file',
@@ -1631,7 +1634,8 @@
 
             // Attachments icon
             var attachmentsIcon = $('<i/>', {
-                'class': 'fa fa-paperclip'
+                'class': 'material-icons',
+                'text': 'attachment'
             });
             if(this.options.attachmentIconURL.length) {
                 attachmentsIcon.css('background-image', 'url("'+this.options.attachmentIconURL+'")');
@@ -1861,7 +1865,11 @@
                     link.text(fileName);
                     link.prepend(fileIcon);
                 }
+                 var q = $('<p/>', {
+                    'text': commentModel.content
+                });
                 content.html(link);
+                q.appendTo(content);
 
             // Case: regular comment
             } else {

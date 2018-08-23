@@ -111,53 +111,6 @@ function initListener() {
   });
 }
 
-function updateDB(inRef, inData, inOnSuccess) {
-  var playersRef = firebase.database().ref(inRef);
-  // users/2017-3-6
-
-  playersRef.update(inData,
-      function(error) {
-          if (error) {
-              console.log(error);
-          } else {
-              inOnSuccess();
-          }
-
-      });
-}
-
-function pushDB(inRef, inData, inOnSuccess=function() {}) {
-  var playersRef = firebase.database().ref(inRef);
-  // users/2017-3-6
-
-  playersRef.push(inData,
-      function(error) {
-          if (error) {
-              console.log(error);
-          } else {
-              console.log("push to DB", inData);
-              inOnSuccess();
-          }
-
-      });
-}
-
-function setDB(inRef, inData, inOnSuccess=function() {}) {
-  var playersRef = firebase.database().ref(inRef);
-  // users/2017-3-6
-
-  playersRef.set(inData,
-      function(error) {
-          if (error) {
-              console.log(error);
-          } else {
-              console.log("push to DB", inData);
-              inOnSuccess();
-          }
-
-      });
-}
-
 function routeToDashboard() {
   var params = getJsonFromUrl(true);
 
