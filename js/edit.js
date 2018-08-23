@@ -46,6 +46,15 @@ function displayEditForm(inRes) {
 } 
 
 function displayQuestions(inRes) {
+  /* load petition content */ 
+  var contentsRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
+  // petition/[petitionID]
+
+  contentsRef.once("value").then(function(snapshot) {
+    var contents = snapshot.val();
+    setContents(editor, contents);
+  });
+
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/question");
   // petition/[petitionID]
 
