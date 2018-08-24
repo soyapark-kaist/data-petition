@@ -19,7 +19,7 @@ function signupSuccess() {
     }
     var formLink = "https://docs.google.com/forms/d/" + params['petition'] + "/edit?usp=sharing";
     callScriptFunction('getPetitionLinks', [formLink], displayEditForm, displayErrorMsg);
-    
+
   }, function(reason) {
     console.log('Error: ' + reason.result.error.message);
   });
@@ -86,10 +86,20 @@ function displayQuestions(inRes) {
 
     setDB("petition/" + params['petition'] + "/question", data_to_update, onSuccess);
 
+    // attach tag buttons 
+    $("#tag-select-options-container").append( '<button class="waves-effect waves-light btn-small white" onclick="$({0}).tagEditor({1}, {2});" style="color:black;">add Textbox</button>'.format("'#tag-editor-textarea'", "'addTag'", "'|textbox|'"));
+    for (var key in inRes) {
+      var add_tag_btn = '<button onclick="$({0}).tagEditor({1}, {2});" class="waves-effect waves-light btn-small blue">add {3}</button>'.format("'#tag-editor-textarea'", "'addTag'","'|" +inRes[key] + "|'", inRes[key]);
+      $("#tag-select-options-container").append( add_tag_btn );
+      // inRes[key]
+    } 
+    
+
   });
 
   $(".authorize-only").show();
   
+  // initialize_materialize_css();
   initListener();
 
   showLoader(false);
@@ -101,6 +111,8 @@ function initListener() {
     // Save contetns to DB. 
     setDB("petition/" + params["petition"] + "/contents", getContents(editor));
   });
+
+
 
   /* If user changes the setting for geolocation */
   var geolocationSetting = firebase.database().ref("petition/" + params["petition"] + "/geolocation");
@@ -118,6 +130,49 @@ function initListener() {
     }
     
   });
+
+  $('input:checkbox').change(function(){
+    if($(this).is(':checked')){
+        var questionID = $($(this).siblings('span')[1]).text();
+
+    }
+  });
+
+  // Tag editor init
+  $('#tag-editor-textarea').tagEditor({ initialTags: ['|COUNT of FIELD1|', 'of us are experiencing lower than', '|textbox|'], placeholder: '',
+    onChange: function(field, editor, tags) {
+      $("#tag-preview-container").empty();
+
+      var story_preview = ""
+      for(var i =0; i < tags.length; i++) {
+        if (tags[i] == "|textbox|") story_preview += '<input type="text" placeholder="Write your number here" style="width:200px;"/>';
+        else story_preview += (tags[i] + " ");
+      }
+
+      $("#tag-preview-container").html(story_preview);
+
+      tag_classes(field, editor, tags);
+    }
+  });
+  // init
+  tag_classes("", "","");
+
+  $('#remove_all_tags').click(function() {
+      var tags = $('#tag-editor-textarea').tagEditor('getTags')[0].tags;
+      for (i=0;i<tags.length;i++){ $('#tag-editor-textarea').tagEditor('removeTag', tags[i]); }
+  });
+
+  function tag_classes(field, editor, tags) {
+      $('.tag-editor li').each(function(){
+          var li = $(this);
+          if (li.find('.tag-editor-tag').length == 0) return;
+
+          if (li.find('.tag-editor-tag').html().includes('|textbox|')) li.addClass('white-tag');
+          else if (li.find('.tag-editor-tag').html().includes('|')) li.addClass('green-tag');
+          // else if (li.find('.tag-editor-tag').html() == 'green') li.addClass('green-tag')
+          else li.removeClass('red-tag green-tag');
+      });
+  }
 }
 
 function routeToDashboard() {

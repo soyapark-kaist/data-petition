@@ -29,11 +29,8 @@ function initPetition() {
     alert("This petition not exist!")
     return;
   } 
-  var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
-  // callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
-
-  var p = {'func': 'getSignatures', 'pid': params['petition'], 'callback': 'initSignatureSummary'};
-  get(p);
+  
+  updateSignatureData();
 
   /* load petition content */ 
   var questionRef = firebase.database().ref("petition/" + params['petition'] + "/contents");
@@ -45,6 +42,21 @@ function initPetition() {
   });
 
   showLoader(false);
+}
+
+function updateSignatureData() {
+  // Remove previous interface
+  $(".tabs .tab").remove();
+  $("#filter-charts").empty();
+  $("#flight-list").empty();
+
+  var params = getJsonFromUrl(true);
+
+  var formLink = "https://docs.google.com/forms/d/" + params['petition'].split("#")[0] + "/edit?usp=sharing";
+  // callScriptFunction('getSignatures', [formLink], initSignatureSummary, displayErrorMsg);
+
+  var p = {'func': 'getSignatures', 'pid': params['petition'], 'callback': 'initSignatureSummary'};
+  get(p);
 }
     
 function initSignatureSummary(inRes) {
@@ -78,6 +90,8 @@ function initSignatureSummary(inRes) {
       if (SIGNATURE_DATA.length > 0) {
         checkAvailableGraphTypes(); 
         initFilter(SIGNATURE_DATA);
+
+
       } else {
         $(".card").hide();
         $("#msg-no-available-chart").show();
@@ -96,33 +110,6 @@ function initSignatureSummary(inRes) {
 
       showLoader(false);
   });
-
-  /* Set signature btn. */ 
-  // if this petition requires geolocation, send it to prefilled location.
-  var geoRef = firebase.database().ref("petition/" + params['petition'] + "/geolocation");
-  // petition/[petitionID]
-
-  geoRef.once("value").then(function(snapshot) {
-    var geo = snapshot.val();
-
-    if(geo['collect']) {
-      // signature submit btn clicked -> geo location detect -> prefilled url generate -> open the url
-      var generatePrefilledUrl = 'function(inRes) { var p = {"func": "getPrefilledUrls", "pid": "{0}", "qid": "{1}", "loc": inRes.lat+"+"+inRes.lng, "callback": "openResponse"};debugger; get(p); }'.format(params['petition'], geo['id']);
-      $("#btn_sign_petition").attr("onclick", "showLoader(true); detectLocation({0});".format(generatePrefilledUrl));
-      // ?entry.1040949360=*%7CFNAME%7C*&entry.271521054=*%7CLNAME%7C*
-      
-
-      // if require geo-location show marker next to the button
-      $("#icon-location-marker").show();
-    }
-    
-    else {
-      $("#icon-location-marker").hide();
-      $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
-    }
-    
-  });
-
 
   /* Set progress bar. */ 
   // var goalRef = firebase.database().ref("petition/" + params['petition'] + "/goal");
@@ -228,33 +215,66 @@ function initListener() {
   });
 
   var elems = document.querySelectorAll('.modal');
-    var instances = M.Modal.init(elems, {
-      'onCloseEnd': () => {
-        removeHighlightFromCards('orange lighten-4');
-      }
-    });
-    addModalClickEventListener('.modal-trigger', function(event, arguments /* Array */){
-      var card = getCardFromClickEvent(event);
-      $(card).addClass('orange lighten-4');
+  var instances = M.Modal.init(elems, {
+    'onCloseEnd': () => {
+      removeHighlightFromCards('orange lighten-4');
+    }
+  });
+  addModalClickEventListener('.modal-trigger', function(event, arguments /* Array */){
+    var card = getCardFromClickEvent(event);
+    $(card).addClass('orange lighten-4');
 
-      var modal_header = document.getElementsByClassName('modal-header')[0];
-      var modal_body = document.getElementsByClassName('modal-body')[0];
-      console.log(event);
-      console.log(arguments);
-      /* Add your codes */
+    var modal_header = document.getElementsByClassName('modal-header')[0];
+    var modal_body = document.getElementsByClassName('modal-body')[0];
+    console.log(event);
+    console.log(arguments);
+    /* Add your codes */
 
-      var graph_type = $(card).attr("graph-type");
-      prepareVizInterface( graph_type ); 
+    var graph_type = $(card).attr("graph-type");
+    prepareVizInterface( graph_type ); 
 
-      $("#chart-container").empty();
+    $("#chart-container").empty();
 
-      if(graph_type != "scatter")
-        drawChart(graph_type, CATEGORY[0], {"count": true});
-    }, 1, 2, 3 /* Arguments */);
+    if(graph_type != "scatter")
+      drawChart(graph_type, CATEGORY[0], {"count": true});
+  }, 1, 2, 3 /* Arguments */);
 
   // document.addEventListener('DOMContentLoaded', function() {
 
   // });
+
+  /* Set signature btn. */ 
+  // if this petition requires geolocation, send it to prefilled location.
+  var geoRef = firebase.database().ref("petition/" + params['petition'] + "/geolocation");
+  // petition/[petitionID]
+
+  geoRef.once("value").then(function(snapshot) {
+    var geo = snapshot.val();
+
+    if(geo['collect']) {
+      // signature submit btn clicked -> geo location detect -> prefilled url generate -> open the url
+      var generatePrefilledUrl = 'function(inRes) { var p = {"func": "getPrefilledUrls", "pid": "{0}", "qid": "{1}", "loc": inRes.lat+"+"+inRes.lng, "callback": "openResponse"};debugger; get(p); }'.format(params['petition'], geo['id']);
+      $("#btn_sign_petition").attr("onclick", "showLoader(true); detectLocation({0});".format(generatePrefilledUrl));
+      // ?entry.1040949360=*%7CFNAME%7C*&entry.271521054=*%7CLNAME%7C*
+      
+
+      // if require geo-location show marker next to the button
+      $("#icon-location-marker").show();
+    }
+    
+    else {
+      $("#icon-location-marker").hide();
+      $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
+    }
+    
+  });
+
+  // Initilize draw charts with first data
+
+  // var o = getSelectedOption( "line" );
+  // updateChartData( formatData($("#axis-select-container li span")[1].innerHTML, o.y, window.currentData()) );
+
+  // drawChart( "line", $("#axis-select-container li span")[1].innerHTML, o.y );
 }
 
 function checkAvailableGraphTypes() {
@@ -370,7 +390,7 @@ function prepareVizInterface(inGraphType) {
     // div에 value가...?
     var $div = $("<div class='col s{1} center' value={0}></div>".format(CATEGORY[0], col_length));
     $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
-    $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
+    $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}" checked> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
     $("#axis-select-container .y-axis".format(inGraphType)).append( $div ); 
     // $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
@@ -580,26 +600,6 @@ function getSelectedOption( inGraphType ) {
   return res;
 }
 
-function initialize_materialize_css() {
-  var select_elems = document.querySelectorAll('select');
-  if (select_elems)
-    var selects = M.FormSelect.init(select_elems, {});
-  
-  var tabs_elems = document.querySelectorAll('.tabs');
-  if (tabs_elems)
-    var tabs = M.Tabs.init(tabs_elems, {});
-  
-  var tooltips_elems = document.querySelectorAll('.tooltipped');
-  if (tooltips_elems)
-    var tooltips = M.Tooltip.init(tooltips_elems, {'html': true});
-
-  var collapsible_elems = document.querySelectorAll('.collapsible');
-  if (collapsible_elems)
-    var instances = M.Collapsible.init(collapsible_elems, {});
-
-  console.log('initialized')
-}
-
 function addModalClickEventListener(query, func, ...args) {
   var elements = document.querySelectorAll(query);
   for (var i = 0; i < elements.length; i++) {
@@ -626,7 +626,7 @@ function removeHighlightFromCards(className) {
 
 function manipulate_chart_configuration() {
   var $chartbuilder_editor = $('.chartbuilder-editor');
-  $chartbuilder_editor.before('<div class="center"><a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a></div>')
+  $chartbuilder_editor.before('<div class="center"><a class="chart-editor-btn waves-effect waves-light btn grey">Edit Chart Configuration</a></div>')
   $chartbuilder_editor.hide();
   $(document).on('click', '.chart-editor-btn', () => {
     $chartbuilder_editor.toggle({
