@@ -76,8 +76,26 @@
           <h5 class="data-points-stats">
             <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data complaints selected.
           </h5>
-          <!-- Dependency and Compatibility Issue ?-->
-          <div class="chartbuilder-container row"></div>
+          <div class="row">
+            <div class="col s4">
+              <div class="axis-select-container">
+                <div class="y-axis center">
+                  <h6>Choose the Y-axis</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col s8">
+              <div class="chartbuilder-container"></div>
+              <div class="axis-select-container">
+                <div class="input-field x-axis-wrapper col s12 m8 offset-m2">
+                  <span>Choose the X-axis</span>
+                  <select class="x-axis">
+                    <option value="" disabled>Choose the X-axis</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="col s12 m6">
             <div class="z-depth-2">
@@ -107,20 +125,6 @@
             <div id="lists" class="z-depth-2 tooltipped" data-position="bottom" data-tooltip='<i class="material-icons">swap_vert</i>'>
               <table id="flight-list" class="list centered"></table>
             </div>
-          </div>
-        </div>
-
-        <div id="axis-select-container">
-          <div class="row">
-            <div class="input-field x-axis-wrapper col s12 m8 offset-m2">
-              <span>Choose the X-axis</span>
-              <select class="x-axis">
-                <option value="" disabled>Choose the X-axis</option>
-              </select>
-            </div>
-          </div>
-          <div class="y-axis row center">
-            <h6>Choose the Y-axis</h6>
           </div>
         </div>
 

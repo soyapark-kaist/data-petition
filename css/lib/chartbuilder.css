@@ -1460,6 +1460,8 @@ canvas {
   margin-top: 0.15em;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid grey;
+  border-left: 1px solid grey;
 }
 .chartbuilder-renderer {
   text-align: center;
