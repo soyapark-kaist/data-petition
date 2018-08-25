@@ -624,24 +624,21 @@ function removeHighlightFromCards(className) {
 
 function manipulate_chart_configuration() {
   var $chartbuilder_editor = $('.chartbuilder-editor');
-  $chartbuilder_editor.before('<div class="center"><a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a></div>')
   $chartbuilder_editor.hide();
+  function edtor_toggle() {
+    $chartbuilder_editor.fadeToggle({
+        'duration': 300,
+    });
+    $('#my-modal-wall').fadeToggle({
+      'duration': 300,
+    });
+  }
   $(document).on('click', '.chart-editor-btn', () => {
-    $chartbuilder_editor.toggle({
-      'duration': 500,
-      'done': () => {
-        var $chart_editor_btn = $('.chart-editor-btn');
-        if ('Edit Chart Configuration' == $chart_editor_btn.text()) {
-          $chart_editor_btn.text('Hide Chart Configuration');
-        } else {
-          $chart_editor_btn.text('Edit Chart Configuration');
-        }
-      }
-    });
-    $('html,body').animate({
-      scrollTop: $chartbuilder_editor.offset().top - $('.chartbuilder-renderer').height() - $('.chart-editor-btn').height(),
-    });
-  })
+    edtor_toggle();
+  });
+  $(document).on('click', '#my-modal-wall', () => {
+    edtor_toggle();
+  });
 }
 
 function choose_axis(x_wrapper_selector, y_options_func) {

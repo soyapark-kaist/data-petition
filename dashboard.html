@@ -14,6 +14,7 @@
     <link href="css/dashboard.css" rel="stylesheet">
   </head>
   <body id="petition-container" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="firebase" mv-server-push mv-autosave>
+    <div id="my-modal-wall" style="display: none;"></div>
     <div id="loading-wall">
       <h5 class="orange-text" style="margin-top: 100px;">Loading</h5>
       <div class="preloader-wrapper big active">
@@ -76,7 +77,7 @@
           <h5 class="data-points-stats">
             <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data complaints selected.
           </h5>
-          <div class="row">
+
             <div class="col s4">
               <div class="axis-select-container">
                 <div class="y-axis center">
@@ -94,9 +95,13 @@
                   </select>
                 </div>
               </div>
-            </div>
-          </div>
 
+          </div>
+          <div class="col s12">
+            <a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a>
+          </div>
+        </div>
+        <div class="row">
           <div class="col s12 m6">
             <div class="z-depth-2">
               <ul class="tabs">

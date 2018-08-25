@@ -1703,17 +1703,24 @@ svg .svg-background {
 .cb-credit-logo {
   fill: #ccc;
 }
+
 .chartbuilder-editor {
-  width: 100%;
-  margin-left: auto;
-  left: auto;
-  right: auto;
-  float: left;
-  box-sizing: border-box;
-  padding: 0 .75rem;
-  min-height: 1px;
-  padding: 0 10px;
-  min-width: 100px;
+  max-height: 70%;
+  width: 65%;
+  margin: auto;
+  overflow-y: auto;
+  border-radius: 2px;
+  top: 10%;
+  left: 0;
+  right: 0;
+  position: fixed;
+  display: block;
+  background-color: #fff;
+  z-index: 98;
+  text-align: center;
+  padding: 12px;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
 }
 
 /*
