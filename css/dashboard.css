@@ -118,3 +118,11 @@ blockquote.day {
 #icon-location-marker {
   font-size: 1.2rem !important;
 }
+
+#chart-include-wrapper {
+  margin-bottom: 15px;
+}
+
+.chart-thumbnail {
+  max-width: 300px;
+}
