@@ -344,7 +344,6 @@ function prepareVizInterface(inGraphType) {
     for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
       if ( !CATEGORY.includes(key) ) {
         $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
-
         $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="questions-public" value="{0}"> <span>{1}</span> </label></p>'.format(key, key) );
       }
     }
@@ -394,6 +393,9 @@ function prepareVizInterface(inGraphType) {
   
   manipulate_chart_configuration();
   initialize_materialize_css();
+  choose_axis('.x-axis-wrapper', (i) => {
+    return i == 0 ? 0 : 2;
+  })
 }
 
 function updateChartData(inData) {
@@ -644,4 +646,24 @@ function manipulate_chart_configuration() {
       scrollTop: $chartbuilder_editor.offset().top - $('.chartbuilder-renderer').height() - $('.chart-editor-btn').height(),
     });
   })
+}
+
+function choose_axis(x_wrapper_selector, y_options_func) {
+  setTimeout(() => {
+    choose_x_axis(x_wrapper_selector);
+    choose_y_axis(y_options_func);
+  }, 500);
+}
+
+function choose_x_axis(wrapper_selector) {
+  console.log(wrapper_selector, $('{0} ul'.format(wrapper_selector)));
+  $('{0} li'.format(wrapper_selector))[1].click();
+}
+
+function choose_y_axis(options_func) {
+  var $y_axis = $('.y-axis .col');
+  for(var i = 0; i < $y_axis.length; i++) {
+    var label = $y_axis[i].getElementsByTagName('label');
+    $(label[options_func(i)]).click();
+  }
 }
