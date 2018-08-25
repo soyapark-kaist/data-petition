@@ -114,3 +114,7 @@ blockquote.day {
   z-index: 97;
   text-align: center;
 }
+
+#icon-location-marker {
+  font-size: 1.2rem !important;
+}
