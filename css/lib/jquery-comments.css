@@ -743,3 +743,15 @@ http://viima.github.io/jquery-comments/*/
 .jquery-comments.read-only .actions {
 	display: none;
 }
+
+.upvote > i {
+	margin-right: 7px;
+}
+
+.switch label input[type=checkbox]:checked+.lever:after {
+	background-color: #ff9800 !important;
+}
+
+.switch label input[type=checkbox]:checked+.lever {
+	background-color: #ffcc80!important;
+}

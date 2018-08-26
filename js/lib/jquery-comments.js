@@ -1958,7 +1958,7 @@
         createUpvoteElement: function(commentModel) {
             // Upvote icon
             var upvoteIcon = $('<i/>', {
-                'class': 'material-icons',
+                'class': 'material-icons tiny',
                 'text': 'thumb_up'
             });
             if(this.options.upvoteIconURL.length) {
@@ -1969,10 +1969,10 @@
             // Upvotes
             var upvoteEl = $('<button/>', {
                 'class': 'action upvote' + (commentModel.userHasUpvoted ? ' highlight-font' : '')
-            }).append($('<span/>', {
+            }).append(upvoteIcon).append($('<span/>', {
                 text: commentModel.upvoteCount,
                 'class': 'upvote-count'
-            })).append(upvoteIcon);
+            }));
 
             return upvoteEl;
         },

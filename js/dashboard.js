@@ -200,8 +200,8 @@ function prepareDrawChart( inEvent ) {
   var o = getSelectedOption( graph_type );
 
   if ( graph_type == "area" || graph_type == "line" || graph_type == "bar") {
-    $("#axis-select-container .y-axis div").first().attr( "value", o.x[0] );
-    $("#axis-select-container .y-axis p").first().text( o.x[0] );
+    $(".axis-select-container .y-axis div").first().attr( "value", o.x[0] );
+    $(".axis-select-container .y-axis p").first().text( o.x[0] );
   }
 
   updateChartData( formatData(o.x[0], o.y, window.currentData()) );
@@ -375,7 +375,6 @@ function prepareVizInterface(inGraphType) {
     for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
       if ( !CATEGORY.includes(key) ) {
         $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
-
         $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="questions-public" value="{0}"> <span>{1}</span> </label></p>'.format(key, key) );
       }
     }
@@ -391,40 +390,39 @@ function prepareVizInterface(inGraphType) {
   }
 
   else {
-    var col_nums = 1; // Default 1 for x-axis
-    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
-      if ( ! CATEGORY.includes(key))
-        col_nums += 1;
-    }
-    var col_length = Math.round(12/col_nums);
+    var col_length_s = 12;
+    var col_length_m = 6;
 
     // div에 value가...?
-    var $div = $("<div class='col s{1} center' value={0}></div>".format(CATEGORY[0], col_length));
+    var $div = $("<div class='col s{1} m{2} center' value={0}></div>".format(CATEGORY[0], col_length_s, col_length_m));
     $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
     $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}" checked> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
-    $("#axis-select-container .y-axis".format(inGraphType)).append( $div ); 
+    $(".axis-select-container .y-axis".format(inGraphType)).append( $div ); 
     // $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
     for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
       if ( CATEGORY.includes(key) ) {
-        $("#axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+        $(".axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
       }
       else {
-        $div = $("<div class='y-value-wrapper col s{1} center' value='{0}''></div>".format(key, col_length));
+        $div = $("<div class='y-value-wrapper col s{1} m{2} center' value='{0}''></div>".format(key, col_length_s, col_length_m));
         $div.append( '<p>{0}</p>'.format(key) ); 
 
         $.each([ 'min', 'max', 'avg', 'sum' ], function( index, value ) {
           $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format(value, value) );    
         });    
         
-        $("#axis-select-container .y-axis".format(inGraphType)).append( $div );
+        $(".axis-select-container .y-axis".format(inGraphType)).append( $div );
       }
     }
   }
   
   manipulate_chart_configuration();
   initialize_materialize_css();
+  choose_axis('.x-axis-wrapper', (i) => {
+    return i == 0 ? 0 : 2;
+  })
 }
 
 function updateChartData(inData) {
@@ -581,10 +579,10 @@ function drawChart(inGraphType, inField, inValueFields) {
 function getSelectedOption( inGraphType ) {
   var res = {'x': [], 'y':{}};
 
-  res.x.push($("#axis-select-container .x-axis")[0].value);
+  res.x.push($(".axis-select-container .x-axis")[0].value);
 
 
-  $("#axis-select-container .y-axis input:checked").each(function(i) { 
+  $(".axis-select-container .y-axis input:checked").each(function(i) { 
     var v = $(this).attr('value');
 
     if (v == "count") {
@@ -637,22 +635,41 @@ function removeHighlightFromCards(className) {
 
 function manipulate_chart_configuration() {
   var $chartbuilder_editor = $('.chartbuilder-editor');
-  $chartbuilder_editor.before('<div class="center"><a class="chart-editor-btn waves-effect waves-light btn grey">Edit Chart Configuration</a></div>')
+  //$chartbuilder_editor.before('<div class="center"><a class="chart-editor-btn waves-effect waves-light btn grey">Edit Chart Configuration</a></div>')
+
   $chartbuilder_editor.hide();
+  function edtor_toggle() {
+    $chartbuilder_editor.fadeToggle({
+        'duration': 300,
+    });
+    $('#my-modal-wall').fadeToggle({
+      'duration': 300,
+    });
+  }
   $(document).on('click', '.chart-editor-btn', () => {
-    $chartbuilder_editor.toggle({
-      'duration': 500,
-      'done': () => {
-        var $chart_editor_btn = $('.chart-editor-btn');
-        if ('Edit Chart Configuration' == $chart_editor_btn.text()) {
-          $chart_editor_btn.text('Hide Chart Configuration');
-        } else {
-          $chart_editor_btn.text('Edit Chart Configuration');
-        }
-      }
-    });
-    $('html,body').animate({
-      scrollTop: $chartbuilder_editor.offset().top - $('.chartbuilder-renderer').height() - $('.chart-editor-btn').height(),
-    });
-  })
+    edtor_toggle();
+  });
+  $(document).on('click', '#my-modal-wall', () => {
+    edtor_toggle();
+  });
+}
+
+function choose_axis(x_wrapper_selector, y_options_func) {
+  setTimeout(() => {
+    choose_x_axis(x_wrapper_selector);
+    choose_y_axis(y_options_func);
+  }, 500);
+}
+
+function choose_x_axis(wrapper_selector) {
+  console.log(wrapper_selector, $('{0} ul'.format(wrapper_selector)));
+  $('{0} li'.format(wrapper_selector))[1].click();
+}
+
+function choose_y_axis(options_func) {
+  var $y_axis = $('.y-axis .col');
+  for(var i = 0; i < $y_axis.length; i++) {
+    var label = $y_axis[i].getElementsByTagName('label');
+    $(label[options_func(i)]).click();
+  }
 }

@@ -26,9 +26,9 @@ var saveComment = function(data) {
 	// postCommentCallback(data);
 	data.id = parseInt(new Date().getTime() / 1000);
 
-	// TODO replace with interface feedback 
 	// If the user wishes to add the chart to comment, add to comments
-	if (true) {
+	var wish_to_add_chart = document.querySelector('.input-chart-include').checked;
+	if (wish_to_add_chart) {
 		// Trigger button created by node
 		var event = new CustomEvent("click", { "detail": "Example of an event" });
 		var elem = $(".cb-button.export-button")[1];
