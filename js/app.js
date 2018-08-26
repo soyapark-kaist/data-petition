@@ -151,11 +151,34 @@ function displayErrorMsg(inRes) {
   if ( inRes.includes("No item with the given ID could be found, or you do not have permission to access it.") )
     $(".section .container").append('<h5 class="header col s12 light">No item with this petition URL could be found, or you do not have permission to access it.</h5>');
 
+  if(inRes.includes("Authorization is required to perform that action.")) 
+      updateSigninStatus(false);
+
   showLoader(false);
 }
 
 function displayRequestLogin(inRes) {
 
+}
+
+function initialize_materialize_css() {
+  var select_elems = document.querySelectorAll('select');
+  if (select_elems)
+    var selects = M.FormSelect.init(select_elems, {});
+  
+  var tabs_elems = document.querySelectorAll('.tabs');
+  if (tabs_elems)
+    var tabs = M.Tabs.init(tabs_elems, {});
+  
+  var tooltips_elems = document.querySelectorAll('.tooltipped');
+  if (tooltips_elems)
+    var tooltips = M.Tooltip.init(tooltips_elems, {'html': true});
+
+  var collapsible_elems = document.querySelectorAll('.collapsible');
+  if (collapsible_elems)
+    var instances = M.Collapsible.init(collapsible_elems, {});
+
+  console.log('initialized')
 }
 
 

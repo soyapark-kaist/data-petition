@@ -189,3 +189,10 @@
     z-index: 99;
     text-align: center;
  }
+
+.tag-editor .white-tag .tag-editor-tag { color: white; background: grey; }
+.tag-editor .white-tag .tag-editor-delete { background-color: grey; }
+.tag-editor .red-tag .tag-editor-tag { color: #c65353; background: #ffd7d7; }
+.tag-editor .red-tag .tag-editor-delete { background-color: #ffd7d7; }
+.tag-editor .green-tag .tag-editor-tag { color: #45872c; background: #e1f3da; }
+.tag-editor .green-tag .tag-editor-delete { background-color: #e1f3da; }

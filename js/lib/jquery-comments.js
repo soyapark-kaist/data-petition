@@ -128,7 +128,7 @@
                 noCommentsIconURL: '',
 
                 // Strings to be formatted (for example localization)
-                textareaPlaceholderText: 'Add a comment',
+                textareaPlaceholderText: 'Tell us your story',
                 newestText: 'Newest',
                 oldestText: 'Oldest',
                 popularText: 'Popular',

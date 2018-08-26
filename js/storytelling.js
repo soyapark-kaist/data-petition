@@ -40,9 +40,10 @@ var saveComment = function(data) {
 		data.file_mime_type = "image/png"
 		data.file_url = $("#chart-export-output").text();
 		debugger;
-		$("#chart-export-output").remove();
+		$("#chart-export-output").text('');
 	}
 
+	// Push the new comment at the next index
 	var params = getJsonFromUrl(true);
 	var commentRef = firebase.database().ref("petition/" + params['petition'] + "/comments");
 	commentRef.limitToLast(1).once('value', function(snapshot) {

@@ -40,12 +40,9 @@
       <div class="container">
         <h1 class="header center orange-text">[ptitle]</h1>
         <div class="row center">
+          <h4>Community Storyboard</h4>
         </div>
         <div class="row center">
-          <button class="btn btn-large waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Also have complaints?">
-            Also have complaints?
-            <i id="icon-location-marker" class="material-icons">location_searching</i>
-          </button>
           <!-- <button id="edit_signature">edit signature</button> -->
           
           <!-- <div class="signer-progress">
@@ -57,18 +54,18 @@
               </div>
             </div>
           </div> -->
+         <br/>
+          <br/>
+          <br/>
+          <br/>
           
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          
+
           <div id="editor">
           </div>
         </div>  
         <div class="row center">
           <button id="export_data" class="btn waves-effect waves-light grey" onclick="alert('They can download csv or excel ')">
-            Export signature data
+            Export community data
           </button>
         </div>
         
@@ -103,6 +100,17 @@
             <a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a>
           </div>
         </div>
+        
+        <h5>Share your story!</h5>
+        <h6>1. Submit your data</h6>
+        <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button">Would you like to share your story? <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+        <h6>2. Explain using our data</h6>
+        <div id="scaffolder-container"></div>
+        <div id="comments-container"></div>
+        <button class="btn waves-effect waves-light orange" id="btn_comment_load_more" type="button">Load more stories</button>
+
+      </div>
+    </div>
         <div class="row">
           <div class="col s12 m6">
             <div class="z-depth-2">
@@ -113,18 +121,6 @@
                   <li class="tab col s3"><a href="#date-chart">Date</a></li> -->
                 </ul>
                 <div id="filter-charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
-                  <!-- <div id="hour-chart" class="chart">
-                    <span>Ping</span>
-                  </div>
-                  <div id="delay-chart" class="chart">
-                    <span>Download speed (Mb/s)</span>
-                  </div>
-                  <div id="distance-chart" class="chart">
-                    <span>Upload speed (Mb/s)</span>
-                  </div>
-                  <div id="date-chart" class="chart">
-                    <span>Date</span>
-                  </div> -->
                 </div>
               </div>
             </div>
