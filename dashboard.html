@@ -14,6 +14,7 @@
     <link href="css/dashboard.css" rel="stylesheet">
   </head>
   <body id="petition-container" mv-mode="edit" mv-unauthenticated-permissions="read edit save" mv-storage="firebase" mv-server-push mv-autosave>
+    <div id="my-modal-wall" style="display: none;"></div>
     <div id="loading-wall">
       <h5 class="orange-text" style="margin-top: 100px;">Loading</h5>
       <div class="preloader-wrapper big active">
@@ -41,9 +42,12 @@
         <div class="row center">
         </div>
         <div class="row center">
-          <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Also have complaints?">Also have complaints? <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+          <button class="btn btn-large waves-effect waves-light orange" id="btn_sign_petition" type="button" value="Also have complaints?">
+            Also have complaints?
+            <i id="icon-location-marker" class="material-icons">location_searching</i>
+          </button>
           <!-- <button id="edit_signature">edit signature</button> -->
-
+          
           <!-- <div class="signer-progress">
             <h2 id="participants-number"></h2>
             <h5>of partipants have submitted data signature!</h5>
@@ -53,12 +57,12 @@
               </div>
             </div>
           </div> -->
-
+          
           <br/>
           <br/>
           <br/>
           <br/>
-
+          
           <div id="editor">
           </div>
         </div>  
@@ -67,197 +71,145 @@
             Export signature data
           </button>
         </div>
-
+        
         <div class="row center">
           <h4 id="msg-no-available-chart" style="display: none;">Solicit more data signatures in order to visualize the collected data!</h4>
         </div>
-
+        
         <div class="row center">
           <h5 class="data-points-stats">
             <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data complaints selected.
           </h5>
-          <!-- Dependency and Compatibility Issue ?-->
-          <div class="chartbuilder-container row"></div>
-
-          <div class="col s12 m6">
-            <div class="z-depth-2">
-              <ul class="tabs">
-                <!-- <li class="tab col s3"><a class="active" href="#hour-chart">Ping</a></li>
-                <li class="tab col s3"><a href="#delay-chart">Download speed (Mb/s)</a></li>
-                <li class="tab col s3"><a href="#distance-chart">Upload speed (Mb/s)</a></li>
-                <li class="tab col s3"><a href="#date-chart">Date</a></li> -->
-              </ul>
-              <div id="filter-charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
-                <!-- <div id="hour-chart" class="chart">
-                  <span>Ping</span>
-                </div>
-                <div id="delay-chart" class="chart">
-                  <span>Download speed (Mb/s)</span>
-                </div>
-                <div id="distance-chart" class="chart">
-                  <span>Upload speed (Mb/s)</span>
-                </div>
-                <div id="date-chart" class="chart">
-                  <span>Date</span>
-                </div> -->
+          
+          <div class="col s4">
+            <div class="axis-select-container">
+              <div class="y-axis center">
+                <h6 class="orange-text">Choose the Y-axis</h6>
               </div>
             </div>
           </div>
-          <div class="col s12 m6" id="totals">
-            <div id="lists" class="z-depth-2 tooltipped" data-position="bottom" data-tooltip='<i class="material-icons">swap_vert</i>'>
-              <table id="flight-list" class="list centered"></table>
-            </div>
-          </div>
-        </div>
-
-        <div id="axis-select-container">
-          <div class="row">
-            <div class="input-field col s12 m8 offset-m2">
-              <select class="x-axis">
-                <!-- options 넣으면 chartbuilder 안 그려짐.-->
-                <option value="" disabled selected>Choose the X-axis</option>
-              </select>
-            </div>
-          </div>
-          <div class="y-axis row center">
-            <h6>Choose the Y-axis</h6>
-          </div>
-        </div>
-
-        <div id="comments-container"></div>
-        <button class="btn waves-effect waves-light orange" id="btn_comment_load_more" type="button">Load more comments</button>
-
-        <!-- <div id="comment">
-          <form style="margin-top: 10px;"><div class="form-group"><textarea class="form-control status-box" onkeyup="countLetter(this)" rows="2"></textarea></div></form><div class="button-group post-button-group"><p class="counter">140</p><a class="btn btn-primary comments-post like-comment disabled" onclick="postComment(this)" tabindex="0" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-original-title="" title="">Post</a></div><p class="btn btn-default comment-add-report" onclick="handleClickEvents(&quot;start&quot;,&quot;&quot;)">+ 교내 인터넷 데이터 첨부하기</p><div class="report-display"></div>
-        </div> -->
-
-      </div>
-    </div>
-    
-    <div class="loading-container">
-      <div class="loading"></div>
-      <div id="loading-text">Loading your petition</div>
-    </div>
-
-    <!-- Modal Structure -->
-    <div id="modal-for-chart" class="modal">
-      <div class="modal-content">
-        <!-- <h4 class="modal-header">Modal Header</h4> -->
-        <div class="modal-body">
-          <div class="col s12 m8 offset-m2" id="viz-container">
-            <div class="card">
-              <div class="card-content">
-                <span class="card-title">Option</span>
-                <div id="scatter-interface" class="graph-options" graph-type="scatter">
-                  <div class="input-field">
-                    <select class="x-axis">
-                    </select>
-                  </div>
-                  <div class="value-select-container y-axis">
-                  </div>
-                </div>
-
-                <div id="area-interface" class="graph-options" graph-type="area">
-                  <div class="input-field">
-                    <select class="x-axis">
-                    </select>
-                  </div>
-                  <div class="value-select-container y-axis"></div>
-                </div>
-
-                <div id="line-interface" class="graph-options" graph-type="line">
-                  <div class="input-field">
-                    <select class="x-axis">
-                    </select>
-                  </div>
-                  <div class="value-select-container y-axis"></div>
-                </div>
-
-                <div id="bar-interface" class="graph-options" graph-type="bar">
-                  <div class="input-field">
-                    <select class="x-axis">
-                    </select>
-                  </div>
-                  <div class="value-select-container y-axis"></div>
-                </div>
-
-                <div id="pie-interface" class="graph-options" graph-type="pie">
-                  <div class="input-field">
-                    <select class="x-axis">
-                    </select>
-                  </div>
-                  <div class="y-axis">
-                    <p><label>
-                      <input type="radio" name="pie-radio" value="count" id="pie-0" checked/> 
-                      <span>Count of Category</span>
-                    </label></p>
-                    <br />
-                    <p><label>
-                      <input type="radio" name="pie-radio" value="sum" id="pie-1"/> 
-                      <span>
-                        <span class="black-magic">
-                          Sum of &nbsp;
-                          <span class="inline-block-field input-field"><select class="select-value"></select></span>
-                        </span>
-                      </span>
-                    </label></p>
-                  </div>
-                </div>
+          <div class="col s8">
+            <div class="chartbuilder-container"></div>
+            <div class="axis-select-container">
+              <div class="input-field x-axis-wrapper col s12 m8 offset-m2">
+                <h6 class="orange-text">Choose the X-axis</h6>
+                <select class="x-axis">
+                  <option value="" disabled>Choose the X-axis</option>
+                </select>
               </div>
             </div>
           </div>
           <div class="col s12">
-            <div id="chart-container" style="width: 900px; height: 500px;"></div>
+            <a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12 m6">
+            <div class="z-depth-2">
+              <ul class="tabs">
+                <!-- <li class="tab col s3"><a class="active" href="#hour-chart">Ping</a></li>
+                  <li class="tab col s3"><a href="#delay-chart">Download speed (Mb/s)</a></li>
+                  <li class="tab col s3"><a href="#distance-chart">Upload speed (Mb/s)</a></li>
+                  <li class="tab col s3"><a href="#date-chart">Date</a></li> -->
+                </ul>
+                <div id="filter-charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
+                  <!-- <div id="hour-chart" class="chart">
+                    <span>Ping</span>
+                  </div>
+                  <div id="delay-chart" class="chart">
+                    <span>Download speed (Mb/s)</span>
+                  </div>
+                  <div id="distance-chart" class="chart">
+                    <span>Upload speed (Mb/s)</span>
+                  </div>
+                  <div id="date-chart" class="chart">
+                    <span>Date</span>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="col s12 m6" id="totals">
+              <div id="lists" class="z-depth-2 tooltipped" data-position="bottom" data-tooltip='<i class="material-icons">swap_vert</i>'>
+                <table id="flight-list" class="list centered"></table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <div class="divider"></div>
+              <div id="chart-include-wrapper" class="right-align">
+                <h6>Do you want to include the chart?</h6>
+                <!-- Mockup Image -->
+                <div class="switch tooltipped" data-position="top"
+                  data-tooltip='<img class="chart-thumbnail" src="https://canvasjs.com/wp-content/uploads/images/gallery/php-charts/overview/php-charts-graphs-index-data-label.png">'>
+                  <label>
+                    No
+                    <input class="input-chart-include" type="checkbox" checked="checked"><span class="lever"></span>
+                    Yes
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col s12">
+              <div id="comments-container"></div>
+              <!-- <div id="comment">
+                <form style="margin-top: 10px;"><div class="form-group"><textarea class="form-control status-box" onkeyup="countLetter(this)" rows="2"></textarea></div></form><div class="button-group post-button-group"><p class="counter">140</p><a class="btn btn-primary comments-post like-comment disabled" onclick="postComment(this)" tabindex="0" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-original-title="" title="">Post</a></div><p class="btn btn-default comment-add-report" onclick="handleClickEvents(&quot;start&quot;,&quot;&quot;)">+ 교내 인터넷 데이터 첨부하기</p><div class="report-display"></div>
+              </div> -->
+            </div>
+            <div class="col s12 center">
+              <button class="btn waves-effect waves-light orange" id="btn_comment_load_more" type="button">Load more comments</button>
+            </div>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <a class="modal-close waves-effect waves-green btn-flat">Close</a>
+      
+      <div class="loading-container">
+        <div class="loading"></div>
+        <div id="loading-text">Loading your petition</div>
       </div>
-    </div>
-
-    <div id="chart-export-output" style="display: none;"></div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
-
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.0/jquery.textcomplete.js"></script>
-    <script type="text/javascript" src="js/lib/jquery-comments.js"></script>
-
-    <script src="js/lib/crossfilter.v1.min.js"></script>
-    <script src="js/lib/d3.v3.min.js"></script>
-
-    <script type="text/javascript" src="js/privacy.js"></script>    
-    <script type="text/javascript" src="js/app.js"></script>
-
-    <script type="text/javascript" src="js/utils.js"></script>
-    <script type="text/javascript" src="js/filter.js"></script>
-    <script type="text/javascript" src="js/storytelling.js"></script>
-    <script type="text/javascript" src="js/dashboard.js"></script>
-    
-
-    <script type="text/javascript" src="js/lib/mavo.js"></script>
-    <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
-    
-    <script type="text/javascript" src="js/lib/chartbuilder.js"></script>
-
-    
-    <script async defer src="https://apis.google.com/js/api.js"
+      
+      <div id="chart-export-output" style="display: none;"></div>
+      
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      
+      <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
+      
+      <!-- Compiled and minified JavaScript -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+      
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.0/jquery.textcomplete.js"></script>
+      <script type="text/javascript" src="js/lib/jquery-comments.js"></script>
+      
+      <script src="js/lib/crossfilter.v1.min.js"></script>
+      <script src="js/lib/d3.v3.min.js"></script>
+      
+      <script type="text/javascript" src="js/privacy.js"></script>    
+      <script type="text/javascript" src="js/app.js"></script>
+      
+      <script type="text/javascript" src="js/utils.js"></script>
+      <script type="text/javascript" src="js/filter.js"></script>
+      <script type="text/javascript" src="js/storytelling.js"></script>
+      <script type="text/javascript" src="js/dashboard.js"></script>
+      
+      
+      <script type="text/javascript" src="js/lib/mavo.js"></script>
+      <script type="text/javascript" src="js/lib/mavo-firebase.min.js"></script>
+      
+      <script type="text/javascript" src="js/lib/chartbuilder.js"></script>
+      
+      
+      <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){}; handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
-
+    
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script type="text/javascript" src="js/editor_wrapper.js"></script>
-
     
-
+    
+    
     <!-- Initialize Quill editor -->
     <script>
       var editor = new Quill('#editor', {
@@ -268,7 +220,7 @@
         theme: 'snow',
         placeholder: 'Fill your petition content here...',
       });
-
+      
       /* API Usage, refer to js/editor_wrapper.js for more information. */
       setText(editor, 'Wow This is the test text.')
       console.log(getText(editor));
@@ -278,6 +230,6 @@
       $(".ql-toolbar").hide();
     </script>
     <script type="text/javascript" src="js/loading.js"></script>
-
+    
   </body>
 </html>
