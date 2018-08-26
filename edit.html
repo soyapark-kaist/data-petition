@@ -78,51 +78,61 @@
               <div class="determinate" style="width: 70%"></div>
             </div>
           </div> -->
-          <h5 class="header col s12 light">Story scaffolder</h5>
-          Build the topic sentence for your fellow so that it guides them where to start their story!  
-          <br/>
-          <div style="margin:0 0 1.2em"><textarea id="tag-editor-textarea"></textarea></div>
-          <p id="tag-select-options-container">
-              <!-- <span onclick="alert($('#tag-editor-textarea').tagEditor('getTags')[0].tags);" class="ed_on pure-button button-sm">getTags</span> -->
-              <!-- <button onclick="$('#tag-editor-textarea').tagEditor('addTag', '<p>example</p>');" class="ed_on pure-button button-sm">addTag 'example'</button> -->
-          </p>
-          <h6 class="header col s12 light">Preview</h6>
-          <div id="tag-preview-container">|count of field1| of us are experiencing lower than 
-           <input type="text" placeholder="Write your number here" style="width:200px;"/> </div>
+          <h5 class="header col s12 light" id="ingredients-header">Story ingredients</h5>
+          Design the form to collect ingredients. Ingredients are the data that can back our story. Storytellers can use the visualization of the data at their story.  
+          <div id="container-ingredients">
+            <button class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature"
+                   onclick="window.open('http://www.website.com/page')">
+                   Edit the form
+            </button>
 
-          <h5 class="header col s12 light">Story ingredients</h5>
-          Collect data that can back your story from community members. 
-          <button class="authorize-only btn waves-effect waves-light orange" id="input_edit_signature"
-                 onclick="window.open('http://www.website.com/page')">
-                 Edit the form
-          </button>
+            <h6 class="header col s12 light">Privacy setting</h6>
+            <p>
+              Choose which data at signatures are public or not.
+              Response of public questions will be visible to other users and they can use it for their visualization.
+              Unmark personal information (e.g. name, contact) to make it private.
+            </p>
 
-          <h6 class="header col s12 light">Privacy setting</h6>
-          <p>
-            Choose which data at signatures are public or not.
-            Response of public questions will be visible to other users and they can use it for their visualization.
-            Unmark personal information (e.g. name, contact) to make it private.
-          </p>
-
-          <div class="left-align col m6 offset-m3 s12">
-            <div class="card">
-              <div class="card-content">
-                <span class="card-title">public?</span>
-                <div id="questions-public-setting">
-                  <p mv-multiple property="question">
-                    <label> <input property="done" type="checkbox" name="questions-public" checked="checked"> <span>[title]</span> <span style="display:none;">[id]</span> </label> 
-                    <!-- <input property="questions-data-type" type="radio" name="questions-data-type" value="0"> Texts <input property="questions-data-type" type="radio" name="questions-data-type" value="1"> Date <input property="questions-data-type" type="radio" name="questions-data-type" value="2"> Numbers <input property="questions-data-type" type="radio" name="questions-data-type" value="3"> Image -->
-                  </p>
+            <div class="left-align col m6 offset-m3 s12">
+              <div class="card">
+                <div class="card-content">
+                  <span class="card-title">public?</span>
+                  <div id="questions-public-setting">
+                    <p mv-multiple property="question">
+                      <label> <input property="done" type="checkbox" name="questions-public" checked="checked"> <span>[title]</span> <span style="display:none;">[id]</span> </label> 
+                      <!-- <input property="questions-data-type" type="radio" name="questions-data-type" value="0"> Texts <input property="questions-data-type" type="radio" name="questions-data-type" value="1"> Date <input property="questions-data-type" type="radio" name="questions-data-type" value="2"> Numbers <input property="questions-data-type" type="radio" name="questions-data-type" value="3"> Image -->
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <h6 class="header col s12 light">Collect geolocation?</h6>
+            <h6 class="header col s12 light">Collect geolocation?</h6>
             <p>
               <label property="geolocation"> <input property="collect" type="checkbox" name="questions-public"> <span>Do you want your signers to submit their location?</span> </label>
             </p>
+          </div>
+          <br/>
+          <h5 id="scaffolder-header" class="header col s12 light">Story scaffolder</h5>
+          Build the topic sentence for your fellow so that it guides them where to start their story!  
+          <br/>
+          <div id="container-scaffolder">
+            <div style="margin:0 0 1.2em"><textarea id="tag-editor-textarea"></textarea></div>
+          
+            <div class="card">
+                <h6 class="header col s12 light">Preview</h6>
+                <div id="tag-preview-container">|Average of field1| of us are experiencing lower than 
+             <input type="text" placeholder="Write your number here" style="width:200px;"/> </div>
+            </div><br/>
+            
+            <p style="padding-left: 25px;" id="tag-error-msg"></p>
+            <p id="tag-select-options-container">
+                <!-- <span onclick="alert($('#tag-editor-textarea').tagEditor('getTags')[0].tags);" class="ed_on pure-button button-sm">getTags</span> -->
+                <!-- <button onclick="$('#tag-editor-textarea').tagEditor('addTag', '<p>example</p>');" class="ed_on pure-button button-sm">addTag 'example'</button> -->
+            </p>
+          </div>
+        </div>
+
+          
         
         <div class="divider"></div>
 

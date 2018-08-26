@@ -269,6 +269,17 @@ function initListener() {
     
   });
 
+  /* Set scaffolder. */ 
+  var scaffolderRef = firebase.database().ref("petition/1ImWQzTl-3HoHVN-4wmtBdbEQL3H2GrLXCARzKiScpfQ" + "/scaffolder");
+  // petition/[petitionID]
+
+  scaffolderRef.once("value").then(function(snapshot) {
+    debugger;
+    var s = snapshot.val();
+
+    $("#scaffolder-container").html(s);
+  });
+
   // Initilize draw charts with first data
 
   // var o = getSelectedOption( "line" );

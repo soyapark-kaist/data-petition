@@ -151,6 +151,9 @@ function displayErrorMsg(inRes) {
   if ( inRes.includes("No item with the given ID could be found, or you do not have permission to access it.") )
     $(".section .container").append('<h5 class="header col s12 light">No item with this petition URL could be found, or you do not have permission to access it.</h5>');
 
+  if(inRes.includes("Authorization is required to perform that action.")) 
+      updateSigninStatus(false);
+
   showLoader(false);
 }
 
