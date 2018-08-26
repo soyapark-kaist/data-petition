@@ -210,10 +210,6 @@ function prepareDrawChart( inEvent ) {
 }
 
 function initListener() {
-  $(document).on('change', 'select.x-axis, .y-axis input, .y-axis select', function() {
-    prepareDrawChart( $(this) );
-  });
-
   var elems = document.querySelectorAll('.modal');
   var instances = M.Modal.init(elems, {
     'onCloseEnd': () => {
@@ -243,6 +239,8 @@ function initListener() {
 
   // });
 
+  var params = getJsonFromUrl(true);
+
   /* Set signature btn. */ 
   // if this petition requires geolocation, send it to prefilled location.
   var geoRef = firebase.database().ref("petition/" + params['petition'] + "/geolocation");
@@ -270,14 +268,17 @@ function initListener() {
   });
 
   /* Set scaffolder. */ 
-  var scaffolderRef = firebase.database().ref("petition/1ImWQzTl-3HoHVN-4wmtBdbEQL3H2GrLXCARzKiScpfQ" + "/scaffolder");
+  var scaffolderRef = firebase.database().ref("petition/" + params['petition'] + "/scaffolder");
   // petition/[petitionID]
 
   scaffolderRef.once("value").then(function(snapshot) {
-    debugger;
     var s = snapshot.val();
 
     $("#scaffolder-container").html(s);
+  });
+
+  $(document).on('change', 'select.x-axis, .y-axis input, .y-axis select', function() {
+    prepareDrawChart( $(this) );
   });
 
   // Initilize draw charts with first data
@@ -426,6 +427,9 @@ function prepareVizInterface(inGraphType) {
 }
 
 function updateChartData(inData) {
+
+  if( inData == " \n") return;
+debugger;
   /* filter data */
   document.querySelector(".chartbuilder-main textarea").value = inData
 
