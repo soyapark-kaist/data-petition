@@ -1,5 +1,5 @@
 var SIGNATURE_DATA = [], 
-  CATEGORY = [];          // List of a field at the form which is not numeric value. 
+  FIELDS = {};            // Dict of fields, question ID -> {"title" : [question Title], "is_numeric": boolean}
 
 var GRAPH_TYPE = {"scatter": 2, "area": 1, "line": 1, "bar": 1, "pie": 0};
 
@@ -68,9 +68,13 @@ function initSignatureSummary(inRes) {
   questionRef.once("value").then(function(snapshot) {
       var questions = snapshot.val();
 
-      var q = {};
+      var q = {}; // question title -> public boolean
       for(var i =0; i< questions.length; i++) {
         q[questions[i]['title']] = questions[i]['done'];
+
+        if(questions[i]['done']) {
+          FIELDS[questions[i]['id']] = {'title': questions[i]['title']};
+        }
       } 
 
       for(var i =0; i< inRes.signature.length; i++) {
@@ -88,7 +92,7 @@ function initSignatureSummary(inRes) {
       // SIGNATURE_DATA = inRes.signature;
 
       if (SIGNATURE_DATA.length > 0) {
-        checkAvailableGraphTypes(); 
+        computeCategory();
         initFilter(SIGNATURE_DATA);
 
 
@@ -97,14 +101,7 @@ function initSignatureSummary(inRes) {
         $("#msg-no-available-chart").show();
       }
 
-      var a = [];
-      Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).forEach(function(key) {
-        if ( ! CATEGORY.includes(key) )
-          a.push( key );
-      });
-
       prepareVizInterface("line");
-      // updateChartData( formatData(CATEGORY[0], a) );
 
       initListener();
 
@@ -210,30 +207,12 @@ function prepareDrawChart( inEvent ) {
 }
 
 function initListener() {
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {
-    'onCloseEnd': () => {
-      removeHighlightFromCards('orange lighten-4');
-    }
-  });
-  addModalClickEventListener('.modal-trigger', function(event, arguments /* Array */){
-    var card = getCardFromClickEvent(event);
-    $(card).addClass('orange lighten-4');
-
-    var modal_header = document.getElementsByClassName('modal-header')[0];
-    var modal_body = document.getElementsByClassName('modal-body')[0];
-    console.log(event);
-    console.log(arguments);
-    /* Add your codes */
-
-    var graph_type = $(card).attr("graph-type");
-    prepareVizInterface( graph_type ); 
-
-    $("#chart-container").empty();
-
-    if(graph_type != "scatter")
-      drawChart(graph_type, CATEGORY[0], {"count": true});
-  }, 1, 2, 3 /* Arguments */);
+  // var elems = document.querySelectorAll('.modal');
+  // var instances = M.Modal.init(elems, {
+  //   'onCloseEnd': () => {
+  //     removeHighlightFromCards('orange lighten-4');
+  //   }
+  // });
 
   // document.addEventListener('DOMContentLoaded', function() {
 
@@ -251,7 +230,7 @@ function initListener() {
 
     if(geo['collect']) {
       // signature submit btn clicked -> geo location detect -> prefilled url generate -> open the url
-      var generatePrefilledUrl = 'function(inRes) { var p = {"func": "getPrefilledUrls", "pid": "{0}", "qid": "{1}", "loc": inRes.lat+"+"+inRes.lng, "callback": "openResponse"};debugger; get(p); }'.format(params['petition'], geo['id']);
+      var generatePrefilledUrl = 'function(inRes) { var p = {"func": "getPrefilledUrls", "pid": "{0}", "qid": "{1}", "loc": inRes.lat+",+"+inRes.lng, "callback": "openResponse"};debugger; get(p); }'.format(params['petition'], geo['id']);
       $("#btn_sign_petition").attr("onclick", "showLoader(true); detectLocation({0});".format(generatePrefilledUrl));
       // ?entry.1040949360=*%7CFNAME%7C*&entry.271521054=*%7CLNAME%7C*
       
@@ -289,22 +268,12 @@ function initListener() {
   // drawChart( "line", $("#axis-select-container li span")[1].innerHTML, o.y );
 }
 
-function checkAvailableGraphTypes() {
-  computeCategory();
-  var numeric_field_cnt = Object.keys( SIGNATURE_DATA[SIGNATURE_DATA.length - 1] ).length - CATEGORY.length;
-
-  $(".modal-select .card").hide();
-
-  $(".modal-select .card").each(function(index) {
-    if( GRAPH_TYPE[$(this).attr('graph-type')] <= numeric_field_cnt ) 
-      $(this).show();
-  });
-}
-
 function computeCategory() {
-  for(var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
-    if( !isFieldNumeric(key) )
-      CATEGORY.push(key);
+  for (var key in FIELDS) {
+    if( isFieldNumeric(FIELDS[key].title) )
+      FIELDS[key]["is_numeric"] = true;
+    else 
+      FIELDS[key]["is_numeric"] = false;
   }
 }
 
@@ -373,8 +342,8 @@ function prepareVizInterface(inGraphType) {
   $(".value-select-container").empty();
 
   if (inGraphType == "scatter") {
-    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
-      if ( !CATEGORY.includes(key) ) {
+    for (var key in FIELDS) {
+      if(FIELDS[key]["is_numeric"]) {
         $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
         $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="questions-public" value="{0}"> <span>{1}</span> </label></p>'.format(key, key) );
       }
@@ -382,11 +351,13 @@ function prepareVizInterface(inGraphType) {
   }
 
   else if(inGraphType == "pie") {
-    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
-      if ( CATEGORY.includes(key) )
-        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
-      else 
+    for (var key in FIELDS) {
+      if(FIELDS[key]["is_numeric"]) {
         $("#{0}-interface .select-value".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );    
+      }
+      else {
+        $("#{0}-interface .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
+      }
     }
   }
 
@@ -394,21 +365,28 @@ function prepareVizInterface(inGraphType) {
     var col_length_s = 12;
     var col_length_m = 6;
 
+    // Initialize interface with the first x-axis
+    var field = '';
+    for(var key in FIELDS) {
+      if(!FIELDS[key]["is_numeric"]) {
+        field = key;
+        break;
+      }
+    }
+
+
     // div에 value가...?
-    var $div = $("<div class='col s{1} m{2} center' value={0}></div>".format(CATEGORY[0], col_length_s, col_length_m));
-    $div.append( '<p>{0}</p>'.format(CATEGORY[0]) ); 
+    var $div = $("<div class='col s{1} m{2} center' value={0}></div>".format(FIELDS[field]["title"], col_length_s, col_length_m));
+    $div.append( '<p>{0}</p>'.format(FIELDS[field]["title"]) ); 
     $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}" checked> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
     $(".axis-select-container .y-axis".format(inGraphType)).append( $div ); 
     // $("#{0}-interface .y-axis".format(inGraphType)).append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format('count', 'count') );    
 
-    for (var key in SIGNATURE_DATA[SIGNATURE_DATA.length - 1]) {
-      if ( CATEGORY.includes(key) ) {
-        $(".axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(key, key) );
-      }
-      else {
-        $div = $("<div class='y-value-wrapper col s{1} m{2} center' value='{0}''></div>".format(key, col_length_s, col_length_m));
-        $div.append( '<p>{0}</p>'.format(key) ); 
+    for(var key in FIELDS) {
+      if (FIELDS[key]["is_numeric"]) {
+        $div = $("<div class='y-value-wrapper col s{1} m{2} center' value='{0}''></div>".format(FIELDS[key]["title"], col_length_s, col_length_m));
+        $div.append( '<p>{0}</p>'.format(FIELDS[key]["title"]) ); 
 
         $.each([ 'min', 'max', 'avg', 'sum' ], function( index, value ) {
           $div.append( '<p><label> <input type="checkbox" name="y-val-select" value="{0}"> <span>{1}</span> </label></p>'.format(value, value) );    
@@ -416,6 +394,8 @@ function prepareVizInterface(inGraphType) {
         
         $(".axis-select-container .y-axis".format(inGraphType)).append( $div );
       }
+      else 
+        $(".axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(FIELDS[key]["title"], FIELDS[key]["title"]) );
     }
   }
   
@@ -429,7 +409,7 @@ function prepareVizInterface(inGraphType) {
 function updateChartData(inData) {
 
   if( inData == " \n") return;
-debugger;
+
   /* filter data */
   document.querySelector(".chartbuilder-main textarea").value = inData
 

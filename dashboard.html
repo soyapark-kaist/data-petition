@@ -45,21 +45,12 @@
         <div class="row center">
           <div id="editor"></div>
         </div>  
-        <div class="row center">
-          <button id="export_data" class="btn waves-effect waves-light grey" onclick="alert('They can download csv or excel ')">
-            Export community data
-          </button>
-        </div>
         
         <div class="row center">
           <h4 id="msg-no-available-chart" style="display: none;">Solicit more data signatures in order to visualize the collected data!</h4>
         </div>
         
-        <div class="row center">
-          <h5 class="data-points-stats">
-            <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data complaints selected.
-          </h5>
-          
+        <div class="row center">          
           <div class="col s4">
             <div class="axis-select-container">
               <div class="y-axis center">
@@ -78,9 +69,6 @@
               </div>
             </div>
           </div>
-          <div class="col s12">
-            <a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a>
-          </div>
         </div>
 
         <div class="row">
@@ -98,7 +86,15 @@
           </div>
           <div class="col s12 m6" id="totals">
             <div id="lists" class="z-depth-2 tooltipped" data-position="bottom" data-tooltip='<i class="material-icons">swap_vert</i>'>
-              <table id="flight-list" class="list centered"></table>
+                        <h5 class="data-points-stats">
+            <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data complaints selected.
+          </h5>
+            </div>
+            <div class="col s12">
+              <a class="chart-editor-btn waves-effect waves-light btn grey">Edit Chart Configuration</a>
+              <button id="export_data" class="btn waves-effect waves-light grey" onclick="alert('They can download csv or excel ')">
+                Export community data
+              </button>
             </div>
           </div>
         </div>
@@ -109,7 +105,6 @@
         <h6>2. Explain using our data</h6>
         <div id="scaffolder-container"></div>
         <div class="col s12">
-              <div class="divider"></div>
               <div id="chart-include-wrapper" class="right-align">
                 <h6>Do you want to include the chart?</h6>
                 <!-- Mockup Image -->
