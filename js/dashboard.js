@@ -97,6 +97,7 @@ function initSignatureSummary(inRes) {
 
 
       } else {
+        $("#visualize-container").hide();
         $(".card").hide();
         $("#msg-no-available-chart").show();
       }
