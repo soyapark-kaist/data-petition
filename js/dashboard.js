@@ -145,6 +145,11 @@ function detectLocation(inOnSuccess) {
 
 function openResponse(inRes) {
   window.open( inRes['preFilledUrl'] );
+
+
+  $('#form-loader').hide();
+  $('.modal').modal('close');
+  $("#btn_sign_petition").html('<i class="material-icons green">done</i>');
 }
 
 function convertData( inArray ) {
@@ -207,12 +212,13 @@ function prepareDrawChart( inEvent ) {
 }
 
 function initListener() {
-  // var elems = document.querySelectorAll('.modal');
-  // var instances = M.Modal.init(elems, {
-  //   'onCloseEnd': () => {
-  //     removeHighlightFromCards('orange lighten-4');
-  //   }
-  // });
+  // Modal init
+  var elems = document.querySelectorAll('.modal');
+  var instances = M.Modal.init(elems, {
+    'onCloseEnd': () => {
+      removeHighlightFromCards('orange lighten-4');
+    }
+  });
 
   // document.addEventListener('DOMContentLoaded', function() {
 
@@ -230,18 +236,26 @@ function initListener() {
 
     if(geo['collect']) {
       // signature submit btn clicked -> geo location detect -> prefilled url generate -> open the url
-      var generatePrefilledUrl = 'function(inRes) { var p = {"func": "getPrefilledUrls", "pid": "{0}", "qid": "{1}", "loc": inRes.lat+",+"+inRes.lng, "callback": "openResponse"};debugger; get(p); }'.format(params['petition'], geo['id']);
-      $("#btn_sign_petition").attr("onclick", "showLoader(true); detectLocation({0});".format(generatePrefilledUrl));
-      // ?entry.1040949360=*%7CFNAME%7C*&entry.271521054=*%7CLNAME%7C*
       
+      $("#open_form_btn").on("click", function() {
+        $('#form-loader').show();
 
+        var prefillUrl = function(inRes) {
+          var params = getJsonFromUrl(true);
+          var p = {"func": "getPrefilledUrls", "pid": params['petition'], "qid": geo['id'], "loc": inRes.lat+",+"+inRes.lng, "callback": "openResponse"};
+          get(p); 
+        }
+
+         detectLocation(prefillUrl);
+      })
+      
       // if require geo-location show marker next to the button
       $("#icon-location-marker").show();
     }
     
     else {
       $("#icon-location-marker").hide();
-      $("#btn_sign_petition").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
+      $("#open_form_btn").attr("onclick", "window.open('" + inRes['publishLink'] +"')");
     }
     
   });
@@ -398,7 +412,8 @@ function prepareVizInterface(inGraphType) {
         $(".axis-select-container .x-axis".format(inGraphType)).append( "<option value='{0}'>{1}</option>".format(FIELDS[key]["title"], FIELDS[key]["title"]) );
     }
   }
-  
+
+  // manipulate_form_fillout_configuration();
   manipulate_chart_configuration();
   initialize_materialize_css();
   choose_axis('.x-axis-wrapper', (i) => {
@@ -657,3 +672,4 @@ function choose_y_axis(options_func) {
     $(label[options_func(i)]).click();
   }
 }
+

@@ -101,25 +101,44 @@
         
         <h5>Share your story!</h5>
         <h6>1. Submit your data</h6>
-        <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button">Would you like to share your story? <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+        <button class="btn waves-effect waves-light orange modal-trigger" href="#form-fillout-container" id="btn_sign_petition" type="button">Would you like to share your story? </button>
         <h6>2. Explain using our data</h6>
         <div id="scaffolder-container"></div>
         <div class="col s12">
-              <div id="chart-include-wrapper" class="right-align">
-                <h6>Do you want to include the chart?</h6>
-                <!-- Mockup Image -->
-                <div class="switch tooltipped" data-position="top"
-                  data-tooltip='<img class="chart-thumbnail" src="https://canvasjs.com/wp-content/uploads/images/gallery/php-charts/overview/php-charts-graphs-index-data-label.png">'>
-                  <label>
-                    No
-                    <input class="input-chart-include" type="checkbox" checked="checked"><span class="lever"></span>
-                    Yes
-                  </label>
+          <div id="chart-include-wrapper" class="right-align">
+            <h6>Do you want to include the chart?</h6>
+            <!-- Mockup Image -->
+            <div class="switch tooltipped" data-position="top"
+              data-tooltip='<img class="chart-thumbnail" src="https://canvasjs.com/wp-content/uploads/images/gallery/php-charts/overview/php-charts-graphs-index-data-label.png">'>
+              <label>
+                No
+                <input class="input-chart-include" type="checkbox" checked="checked"><span class="lever"></span>
+                Yes
+              </label>
+            </div>
+          </div>
+        </div>
+        <div id="comments-container"></div>
+        <button class="btn waves-effect waves-light orange" id="btn_comment_load_more" type="button">Load more stories</button>
+
+        <div id="form-fillout-container" class="modal">
+          <div class="modal-content">
+            Individual story depicts their experience and complaints regarding the topic of the storyboard. To help them tell their story, storyboard editor designed this form to collect data which back and empower our story. More data, more persuasive! <br/>
+            <button class="btn waves-effect waves-light orange" id="open_form_btn" type="button">Go to the form <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+
+            <div id="form-loader" style="display: none;" class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
                 </div>
               </div>
             </div>
-        <div id="comments-container"></div>
-        <button class="btn waves-effect waves-light orange" id="btn_comment_load_more" type="button">Load more stories</button>
+          </div>     
+        </div>
 
         
         </div>
