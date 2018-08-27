@@ -1,17 +1,26 @@
-var dimensions = {};
+var dimensions = {}; // key: question ID 
 var nestByDate;
-var numeric_field = [];
 
 window.currentData = function() {
     if(! nestByDate) return SIGNATURE_DATA;
-    var flightsByDate = nestByDate.entries(dimensions[numeric_field[0]].dimension.top(40));
+
+    // Pick any numeric field
+    var field = '';
+    for(var key in FIELDS) {
+      if(FIELDS[key]["is_numeric"]) {
+        field = key;
+        break;
+      }
+    }
+
+    var flightsByDate = nestByDate.entries(dimensions[field].dimension.top(40));
     var data_flight = [];
     for (var i = 0; i < flightsByDate.length; i++) {
       data_flight.push( flightsByDate[i].values[0] );
     }
 
     return data_flight;
-  }
+}
 
 function initFilter(inData) {
   flights = inData;
@@ -22,44 +31,40 @@ function initFilter(inData) {
       formatDate = d3.time.format("%B %d, %Y"),
       formatTime = d3.time.format("%I:%M %p");
 
-  Object.keys( inData[inData.length - 1] ).forEach(function(key) {
-    if ( ! CATEGORY.includes(key) )
-      numeric_field.push( key );
-  });
-
   // Past div container for number fields
     // TODO
-    
-  for (var i = 0; i < numeric_field.length; i++) {
-    var $tab, selector_id = numeric_field[i].split(" ").join("").split(".").join("");
+  
+  var cnt = 0
+  for (var key in FIELDS) {
+    if(FIELDS[key]["is_numeric"]) {
+      var $tab;
 
-    if (i == 0)
-      $tab = $('<li class="tab col s3"><a class="active" href="#{0}-chart">{1}</a></li>'.format(selector_id, numeric_field[i]));
-    else 
-      $tab = $('<li class="tab col s3"><a href="#{0}-chart">{1}</a></li>'.format(selector_id, numeric_field[i]));
+      if (cnt++ == 0)
+        $tab = $('<li class="tab col s3"><a class="active" href="#{0}-chart">{1}</a></li>'.format(key, FIELDS[key]["title"]) );
+      else 
+        $tab = $('<li class="tab col s3"><a href="#{0}-chart">{1}</a></li>'.format(key, FIELDS[key]["title"]));
 
-    $(".z-depth-2 .tabs").append( $tab );
+      $(".z-depth-2 .tabs").append( $tab );
 
-    var $container = $('<div id="{0}-chart" class="chart"><span class="title">{1}</span></div>'.format(selector_id, numeric_field[i]));
-    $("#filter-charts").append( $container );
+      var $container = $('<div id="{0}-chart" class="filter-chart"><span class="title">{1}</span></div>'.format(key, FIELDS[key]["title"]));
+      $("#filter-charts").append( $container );
+    }
   }
 
   // A nest operator, for grouping the flight list.
   nestByDate = d3.nest()
-      .key(function(d) { return d[CATEGORY[0]]; });
+      .key(function(d) { var f = Object.keys(FIELDS)[0]; return d[FIELDS[f]["title"]]; });
 
   // A little coercion, since the CSV is untyped.
   flights.forEach(function(d, i) {
     d.index = i;
 
-    for (var i = 0; i < numeric_field.length; i++ ) {
-     d[numeric_field[i]] = parseFloat(d[numeric_field[i]]); 
+    for (var key in FIELDS) {
+      if(FIELDS[key]["is_numeric"])
+        d[FIELDS[key]["title"]] = parseFloat(d[FIELDS[key]["title"]]); 
     }
-    // d.date = parseDate(d.date);
-    // d.delay = +d.delay;
-    // d.distance = +d.distance;
   });
-  console.log(flights);
+  // console.log(flights);
   // Create the crossfilter for the relevant dimensions and groups.
   var flight = crossfilter(flights),
       all = flight.groupAll();
@@ -74,13 +79,13 @@ function initFilter(inData) {
       distances = distance.group(function(d) { return Math.floor(d / 50) * 50; });
       */
 
-  
-  for (var i = 0; i < numeric_field.length; i++ ) {
-    console.log(numeric_field[i]);
-    var dim = flight.dimension(function(d) { return d[numeric_field[i]]; });
-    var dims = dim.group(function(d) { return Math.floor(d / 50) * 50; });
+  for(var key in FIELDS) {
+    if(FIELDS[key]["is_numeric"]) {
+      var dim = flight.dimension(function(d) { return d[FIELDS[key]["title"]]; });
+      var dims = dim.group(function(d) { return Math.floor(d ); });
 
-    dimensions[numeric_field[i]] = {'dimension': dim, 'groups': dims};
+      dimensions[key] = {'dimension': dim, 'groups': dims};
+    }
   }
 
   var charts = [
@@ -117,8 +122,11 @@ function initFilter(inData) {
   ];
 
   for(var key in dimensions) {
-    var min = d3.min(flights, function(d) { return parseFloat(d[key]); }), max = d3.max(flights, function(d) { return parseFloat(d[key]); }),
+
+    var min = d3.min(flights, function(d) { return parseFloat(d[FIELDS[key]["title"]]); }), 
+      max = d3.max(flights, function(d) { return parseFloat(d[FIELDS[key]["title"]]); }),
       r = max -min;
+      console.log(FIELDS[key]["title"], min, max, r)
 
     charts.push(barChart()
         .dimension(dimensions[key]['dimension'])
@@ -133,7 +141,7 @@ function initFilter(inData) {
   // .chart elements in the DOM, bind the charts to the DOM and render them.
   // We also listen to the chart's brush events to update the display.
 
-  var chart = d3.selectAll(".chart")
+  var chart = d3.selectAll(".filter-chart")
       .data(charts)
       .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
 
@@ -154,8 +162,12 @@ function initFilter(inData) {
 
   // Whenever the brush moves, re-rendering everything.
   function renderAll() {
+    // Redraw filter chart
     chart.each(render);
-    list.each(render);
+
+    // update chart
+    var current_option = getSelectedOption("line");
+    drawChart( "line", current_option.x[0], current_option.y, window.currentData() );
     d3.select("#active").text(formatNumber(all.value()));
   }
 
@@ -179,58 +191,67 @@ function initFilter(inData) {
   };
 
   function flightList(div) {
-    var flightsByDate = nestByDate.entries(dimensions[numeric_field[0]].dimension.top(40));
+    // Pick any numeric field
+    // var field = '';
+    // for(var key in FIELDS) {
+    //   if(FIELDS[key]["is_numeric"]) {
+    //     field = key;
+    //     break;
+    //   }
+    // }
 
-    var current_option = getSelectedOption("line");
-    drawChart( "line", current_option.x[0], current_option.y, window.currentData() );
+    // var flightsByDate = nestByDate.entries(dimensions[field].dimension.top(40));
 
-    div.each(function() {
-      var date = d3.select(this).selectAll(".date")
-          .data(flightsByDate, function(d) { return d.key; });
+    // var current_option = getSelectedOption("line");
+    // drawChart( "line", current_option.x[0], current_option.y, window.currentData() );
 
-      date.enter().append("tbody")
-          .attr("class", "date")
-        .append("blockquote")
-          .attr("class", "day")
-          .text(function(d) { return d.values[0][numeric_field[0]]; });
+    // div.each(function() {
+    //   var date = d3.select(this).selectAll(".date")
+    //       .data(flightsByDate, function(d) { return d.key; });
 
-      date.exit().remove();
+    //   date.enter().append("tbody")
+    //       .attr("class", "date")
+    //     .append("blockquote")
+    //       .attr("class", "day")
+    //       .text(function(d) { return d.values[0][numeric_field[0]]; });
 
-      var flight = date.order().selectAll(".flight")
-          .data(function(d) { return d.values; }, function(d) { return d.index; });
+    //   date.exit().remove();
 
-      var flightEnter = flight.enter().append("tr")
-          .attr("class", "flight");
+    //   var flight = date.order().selectAll(".flight")
+    //       .data(function(d) { return d.values; }, function(d) { return d.index; });
+
+    //   var flightEnter = flight.enter().append("tr")
+    //       .attr("class", "flight");
 
 
-      for( var key in SIGNATURE_DATA[SIGNATURE_DATA.length -1]) {
-        flightEnter.append("td")
-          .attr("class", key)
-          .text(function(d) { return d[key]; });
-      }
+    //   for( var key in SIGNATURE_DATA[SIGNATURE_DATA.length -1]) {
+    //     flightEnter.append("td")
+    //       .attr("class", key)
+    //       .text(function(d) { return d[key]; });
+    //   }
       
 
-      // flightEnter.append("div")
-      //     .attr("class", "origin")
-      //     .text(function(d) { return d.origin; });
+    //   // flightEnter.append("div")
+    //   //     .attr("class", "origin")
+    //   //     .text(function(d) { return d.origin; });
 
-      // flightEnter.append("div")
-      //     .attr("class", "destination")
-      //     .text(function(d) { return d.destination; });
+    //   // flightEnter.append("div")
+    //   //     .attr("class", "destination")
+    //   //     .text(function(d) { return d.destination; });
 
-      // flightEnter.append("div")
-      //     .attr("class", "distance")
-      //     .text(function(d) { return formatNumber(d.distance) + " mi."; });
+    //   // flightEnter.append("div")
+    //   //     .attr("class", "distance")
+    //   //     .text(function(d) { return formatNumber(d.distance) + " mi."; });
 
-      // flightEnter.append("div")
-      //     .attr("class", "delay")
-      //     .classed("early", function(d) { return d.delay < 0; })
-      //     .text(function(d) { return formatChange(d.delay) + " min."; });
+    //   // flightEnter.append("div")
+    //   //     .attr("class", "delay")
+    //   //     .classed("early", function(d) { return d.delay < 0; })
+    //   //     .text(function(d) { return formatChange(d.delay) + " min."; });
 
-      flight.exit().remove();
+    //   flight.exit().remove();
 
-      flight.order();
-    });
+    //   flight.order();
+    // });
   }
 
   function barChart() {

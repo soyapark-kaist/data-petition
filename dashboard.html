@@ -43,41 +43,14 @@
           <h4>Community Storyboard</h4>
         </div>
         <div class="row center">
-          <!-- <button id="edit_signature">edit signature</button> -->
-          
-          <!-- <div class="signer-progress">
-            <h2 id="participants-number"></h2>
-            <h5>of partipants have submitted data signature!</h5>
-            <div class="col m6 offset-m3 s12">
-              <div class="progress">
-                <div class="determinate" style="width: 70%"></div>
-              </div>
-            </div>
-          </div> -->
-         <br/>
-          <br/>
-          <br/>
-          <br/>
-          
-
-          <div id="editor">
-          </div>
+          <div id="editor"></div>
         </div>  
-        <div class="row center">
-          <button id="export_data" class="btn waves-effect waves-light grey" onclick="alert('They can download csv or excel ')">
-            Export community data
-          </button>
-        </div>
         
         <div class="row center">
-          <h4 id="msg-no-available-chart" style="display: none;">Solicit more data signatures in order to visualize the collected data!</h4>
+          <h4 id="msg-no-available-chart" style="display: none;">There is no submitted data yet! Solicit more stories in order to visualize the collected data!</h4>
         </div>
         
-        <div class="row center">
-          <h5 class="data-points-stats">
-            <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data complaints selected.
-          </h5>
-          
+        <div id="visualize-container" class="row center">          
           <div class="col s4">
             <div class="axis-select-container">
               <div class="y-axis center">
@@ -96,66 +69,78 @@
               </div>
             </div>
           </div>
-          <div class="col s12">
-            <a class="chart-editor-btn waves-effect waves-light btn orange">Edit Chart Configuration</a>
+        </div>
+
+        <div class="row">
+          <div class="col s12 m6">
+            <div class="z-depth-2">
+              <ul class="tabs">
+              <!-- <li class="tab col s3"><a class="active" href="#hour-chart">Ping</a></li>
+                <li class="tab col s3"><a href="#delay-chart">Download speed (Mb/s)</a></li>
+                <li class="tab col s3"><a href="#distance-chart">Upload speed (Mb/s)</a></li>
+                <li class="tab col s3"><a href="#date-chart">Date</a></li> -->
+              </ul>
+              <div id="filter-charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
+              </div>
+            </div>
+          </div>
+          <div class="col s12 m6" id="totals">
+            <div id="lists" class="z-depth-2 tooltipped" data-position="bottom" data-tooltip='<i class="material-icons">swap_vert</i>'>
+                        <h5 class="data-points-stats">
+            <span id="active" class="orange-text">-</span> of <span id="total" class="orange-text">-</span> data  selected.
+          </h5>
+            </div>
+            <div class="col s12">
+              <a class="chart-editor-btn waves-effect waves-light btn grey">Edit Chart Configuration</a>
+              <button id="export_data" class="btn waves-effect waves-light grey" onclick="alert('They can download csv or excel ')">
+                Export community data
+              </button>
+            </div>
           </div>
         </div>
         
         <h5>Share your story!</h5>
         <h6>1. Submit your data</h6>
-        <button class="btn waves-effect waves-light orange" id="btn_sign_petition" type="button">Would you like to share your story? <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+        <button class="btn waves-effect waves-light orange modal-trigger" href="#form-fillout-container" id="btn_sign_petition" type="button">Would you like to share your story? </button>
         <h6>2. Explain using our data</h6>
         <div id="scaffolder-container"></div>
+        <div class="col s12">
+          <div id="chart-include-wrapper" class="right-align">
+            <h6>Do you want to include the chart?</h6>
+            <!-- Mockup Image -->
+            <div class="switch tooltipped" data-position="top"
+              data-tooltip='<img class="chart-thumbnail" src="https://canvasjs.com/wp-content/uploads/images/gallery/php-charts/overview/php-charts-graphs-index-data-label.png">'>
+              <label>
+                No
+                <input class="input-chart-include" type="checkbox" checked="checked"><span class="lever"></span>
+                Yes
+              </label>
+            </div>
+          </div>
+        </div>
         <div id="comments-container"></div>
         <button class="btn waves-effect waves-light orange" id="btn_comment_load_more" type="button">Load more stories</button>
 
-      </div>
-    </div>
-        <div class="row">
-          <div class="col s12 m6">
-            <div class="z-depth-2">
-              <ul class="tabs">
-                <!-- <li class="tab col s3"><a class="active" href="#hour-chart">Ping</a></li>
-                  <li class="tab col s3"><a href="#delay-chart">Download speed (Mb/s)</a></li>
-                  <li class="tab col s3"><a href="#distance-chart">Upload speed (Mb/s)</a></li>
-                  <li class="tab col s3"><a href="#date-chart">Date</a></li> -->
-                </ul>
-                <div id="filter-charts" class="tooltipped" data-position="bottom" data-tooltip='You can filter data with click and drag'>
+        <div id="form-fillout-container" class="modal">
+          <div class="modal-content">
+            Individual story depicts their experience and complaints regarding the topic of the storyboard. To help them tell their story, storyboard editor designed this form to collect data which back and empower our story. More data, more persuasive! <br/>
+            <button class="btn waves-effect waves-light orange" id="open_form_btn" type="button">Go to the form <i id="icon-location-marker" class="material-icons">location_searching</i></button>
+
+            <div id="form-loader" style="display: none;" class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div><div class="gap-patch">
+                  <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                  <div class="circle"></div>
                 </div>
               </div>
             </div>
-            <div class="col s12 m6" id="totals">
-              <div id="lists" class="z-depth-2 tooltipped" data-position="bottom" data-tooltip='<i class="material-icons">swap_vert</i>'>
-                <table id="flight-list" class="list centered"></table>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <div class="divider"></div>
-              <div id="chart-include-wrapper" class="right-align">
-                <h6>Do you want to include the chart?</h6>
-                <!-- Mockup Image -->
-                <div class="switch tooltipped" data-position="top"
-                  data-tooltip='<img class="chart-thumbnail" src="https://canvasjs.com/wp-content/uploads/images/gallery/php-charts/overview/php-charts-graphs-index-data-label.png">'>
-                  <label>
-                    No
-                    <input class="input-chart-include" type="checkbox" checked="checked"><span class="lever"></span>
-                    Yes
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="col s12">
-              <div id="comments-container"></div>
-              <!-- <div id="comment">
-                <form style="margin-top: 10px;"><div class="form-group"><textarea class="form-control status-box" onkeyup="countLetter(this)" rows="2"></textarea></div></form><div class="button-group post-button-group"><p class="counter">140</p><a class="btn btn-primary comments-post like-comment disabled" onclick="postComment(this)" tabindex="0" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-original-title="" title="">Post</a></div><p class="btn btn-default comment-add-report" onclick="handleClickEvents(&quot;start&quot;,&quot;&quot;)">+ 교내 인터넷 데이터 첨부하기</p><div class="report-display"></div>
-              </div> -->
-            </div>
-            <div class="col s12 center">
-              <button class="btn waves-effect waves-light orange" id="btn_comment_load_more" type="button">Load more comments</button>
-            </div>
-          </div>
+          </div>     
+        </div>
+
+        
         </div>
       </div>
       

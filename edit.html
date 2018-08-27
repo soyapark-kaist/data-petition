@@ -96,7 +96,7 @@
             <div class="left-align col m6 offset-m3 s12">
               <div class="card">
                 <div class="card-content">
-                  <span class="card-title">public?</span>
+                  <span class="card-title">public? <button id="question-update-btn" class="btn waves-effect waves-light white btn-small"><i class="material-icons green">refresh</i></button></span>
                   <div id="questions-public-setting">
                     <p mv-multiple property="question">
                       <label> <input property="done" type="checkbox" name="questions-public" checked="checked"> <span>[title]</span> <span style="display:none;">[id]</span> </label> 
@@ -108,7 +108,7 @@
             </div>
             <h6 class="header col s12 light">Collect geolocation?</h6>
             <p>
-              <label property="geolocation"> <input property="collect" type="checkbox" name="questions-public"> <span>Do you want your signers to submit their location?</span> </label>
+              <label> <input id="geo-input" type="checkbox" checked=""> <span>Do you want your signers to submit their location?</span></label>
             </p>
           </div>
           <br/>
