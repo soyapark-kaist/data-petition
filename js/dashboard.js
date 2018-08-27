@@ -261,7 +261,7 @@ function initListener() {
   });
 
   /* Set scaffolder. */ 
-  var scaffolderRef = firebase.database().ref("petition/" + params['petition'] + "/scaffolder");
+  var scaffolderRef = firebase.database().ref("petition/" + params['petition'] + "/scaffolder/html");
   // petition/[petitionID]
 
   scaffolderRef.once("value").then(function(snapshot) {
